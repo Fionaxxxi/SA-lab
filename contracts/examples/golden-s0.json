@@ -1,0 +1,506 @@
+{
+  "schema_version": "v1",
+  "case_set": "S0",
+  "generated_at": "2026-11-09T21:57:28",
+  "generated_by": "彭雯青",
+  "provenance": {
+    "audio": "本机 Microsoft Huihui Desktop 合成的测试语音，非真人录音；仅用于链路与格式验证，不计入 S2 语料",
+    "audio_storage": "experiments/samples/local/（已被 .gitignore 排除，文件不入库）",
+    "note": "期望值由实现方首次运行生成并人工核对，属于基线锁定而非第三方独立预期；S1 由刘慧芳在手机端复跑比对",
+    "known_limit": "Vosk 中文输出为空格分词且不带标点，真实转写基线中整段被切成一句；接入 M1 后以 VAD 段作为句子单位，句子粒度问题在 S1 解决"
+  },
+  "model_versions": {
+    "m2": "cn-0.22",
+    "m2_sha256": "7F5580BF7CA3D9E8CE8BE68337378950ED78EF974DF7A7D4EAD8DBE32BEC2FA1",
+    "m3": "Xenova ONNX export（具体 commit 待锁定）",
+    "m3_sha256": "185AE63F47E17A7E8D30D0E6A3CDE6A6E4B79BC5B81666ECFFC279A6856CA113",
+    "m3_config": {
+      "dimension": 384,
+      "max_length": 128,
+      "pooling": "mean",
+      "normalize": true
+    },
+    "m4_threshold": {
+      "threshold": 0.5,
+      "score_round_digits": 6,
+      "threshold_status": "provisional_until_s2"
+    }
+  },
+  "cases": [
+    {
+      "case_id": "S0-T2-M2-A",
+      "module": "M2",
+      "input": {
+        "wav": "s0_case_a.wav",
+        "sample_rate_hz": 16000,
+        "channels": 1,
+        "sample_format": "s16le",
+        "sample_count": 311440,
+        "duration_sec": 19.465,
+        "sha256": "A60E61DA553E7B65C1BE473D5A0A943FFE8284F8152FB7E175D4182CE6A02B2F"
+      },
+      "expected": {
+        "transcript": {
+          "full_text": "考生 开始 作答 面对 群众 诉求 我 会 先 耐心 倾听 准确 记录 问题 在 按 职责 范围 分类 处理 能够 当场 解决 的 立即 解决 需要 协调 的 说明 办理 时限 并 及时 反馈 进展",
+          "segments": [
+            {
+              "segment_id": "seg-a",
+              "start_sample": 0,
+              "end_sample": 311440,
+              "text": "考生 开始 作答 面对 群众 诉求 我 会 先 耐心 倾听 准确 记录 问题 在 按 职责 范围 分类 处理 能够 当场 解决 的 立即 解决 需要 协调 的 说明 办理 时限 并 及时 反馈 进展"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "case_id": "S0-T2-M2-B",
+      "module": "M2",
+      "input": {
+        "wav": "s0_case_b.wav",
+        "sample_rate_hz": 16000,
+        "channels": 1,
+        "sample_format": "s16le",
+        "sample_count": 249360,
+        "duration_sec": 15.585,
+        "sha256": "30F8E15C928727A936734B79A32435428D066AB2F7C7B6DDB4552869B6CA11B8"
+      },
+      "expected": {
+        "transcript": {
+          "full_text": "首先 我 会 稳定 情绪 弄清 对方 最 关心 的 问题 然后 核实 事实 依据 避免 主观 判断 最后 提出 可 执行 的 方案 并 约定 下 一 次 沟通 时间",
+          "segments": [
+            {
+              "segment_id": "seg-b",
+              "start_sample": 0,
+              "end_sample": 249360,
+              "text": "首先 我 会 稳定 情绪 弄清 对方 最 关心 的 问题 然后 核实 事实 依据 避免 主观 判断 最后 提出 可 执行 的 方案 并 约定 下 一 次 沟通 时间"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "case_id": "S0-T2-M3-TOKEN",
+      "module": "M3",
+      "input": {
+        "texts": [
+          "面对群众诉求，我会先耐心倾听并记录关键信息。",
+          "公务员面试中如何回应群众诉求"
+        ]
+      },
+      "expected": {
+        "inspect": [
+          {
+            "text": "面对群众诉求，我会先耐心倾听并记录关键信息。",
+            "token_ids": [
+              0,
+              6,
+              26811,
+              42444,
+              78119,
+              8681,
+              4,
+              89809,
+              2996,
+              117388,
+              107283,
+              10456,
+              2672,
+              42750,
+              42037,
+              5412,
+              30,
+              2
+            ],
+            "token_count": 18,
+            "input_shape": [
+              1,
+              18
+            ],
+            "output_shape": [
+              1,
+              18,
+              384
+            ],
+            "output_dtype": "float32"
+          },
+          {
+            "text": "公务员面试中如何回应群众诉求",
+            "token_ids": [
+              0,
+              6,
+              171139,
+              111127,
+              514,
+              5733,
+              102870,
+              42444,
+              78119,
+              8681,
+              2
+            ],
+            "token_count": 11,
+            "input_shape": [
+              1,
+              11
+            ],
+            "output_shape": [
+              1,
+              11,
+              384
+            ],
+            "output_dtype": "float32"
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "S0-T2-M3-VECTOR-A",
+      "module": "M3",
+      "input": {
+        "source_case": "S0-T2-M2-A",
+        "keypoints": [
+          {
+            "keypoint_id": "k1",
+            "text": "耐心倾听并记录群众诉求"
+          },
+          {
+            "keypoint_id": "k2",
+            "text": "按职责分类处理，当场解决"
+          },
+          {
+            "keypoint_id": "k3",
+            "text": "说明办理时限并及时反馈"
+          }
+        ]
+      },
+      "expected": {
+        "dimension": 384,
+        "answer_sentences": [
+          {
+            "sentence_id": "s1",
+            "text": "考生 开始 作答 面对 群众 诉求 我 会 先 耐心 倾听 准确 记录 问题 在 按 职责 范围 分类 处理 能够 当场 解决 的 立即 解决 需要 协调 的 说明 办理 时限 并 及时 反馈 进展",
+            "vector_sha256": "87CDC33B2561E25249A03405C8D8D95CCA7C57082FDF3C1A1669ABA2499BA58B",
+            "vector_head8": [
+              0.03505599871277809,
+              0.033757999539375305,
+              -0.03328600153326988,
+              -0.028020000085234642,
+              -0.03491299971938133,
+              -0.041627999395132065,
+              -0.00902200024574995,
+              0.05229400098323822
+            ]
+          }
+        ],
+        "keypoints": [
+          {
+            "keypoint_id": "k1",
+            "vector_sha256": "8B59068DAA8D71D4980C224AA9F0614CB18494201FC0A63C2E6DA5B8DA235654",
+            "vector_head8": [
+              0.030621999874711037,
+              0.02339399978518486,
+              -0.09555400162935257,
+              -0.0346359983086586,
+              -0.012879000045359135,
+              0.012365000322461128,
+              0.0317469984292984,
+              -0.004007999785244465
+            ]
+          },
+          {
+            "keypoint_id": "k2",
+            "vector_sha256": "CC29B9FF7CC358D916E519F43FD0B97A3E5A6AD86D7F3EE10F3A4679E18F94A0",
+            "vector_head8": [
+              0.011536999605596066,
+              0.038541000336408615,
+              -0.03949299827218056,
+              -0.035016998648643494,
+              -0.03151100128889084,
+              -0.008987000212073326,
+              0.09747999906539917,
+              0.03313000127673149
+            ]
+          },
+          {
+            "keypoint_id": "k3",
+            "vector_sha256": "7866AB7924AB3B988AE9FC60B96FD014FC1C83D936532F498572572021E5EE18",
+            "vector_head8": [
+              -0.04361699894070625,
+              0.02656400017440319,
+              -0.028819000348448753,
+              -0.033080000430345535,
+              -0.021726999431848526,
+              -0.016679000109434128,
+              0.004627999849617481,
+              0.023360999301075935
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "S0-T2-M4-A-0.5",
+      "module": "M4",
+      "input": {
+        "source_case": "S0-T2-M3-VECTOR-A",
+        "threshold": 0.5
+      },
+      "expected": {
+        "matches": [
+          {
+            "keypoint_id": "k1",
+            "score": 0.701657,
+            "covered": true,
+            "evidence_sentence_id": "s1",
+            "evidence_text": "考生 开始 作答 面对 群众 诉求 我 会 先 耐心 倾听 准确 记录 问题 在 按 职责 范围 分类 处理 能够 当场 解决 的 立即 解决 需要 协调 的 说明 办理 时限 并 及时 反馈 进展"
+          },
+          {
+            "keypoint_id": "k2",
+            "score": 0.583116,
+            "covered": true,
+            "evidence_sentence_id": "s1",
+            "evidence_text": "考生 开始 作答 面对 群众 诉求 我 会 先 耐心 倾听 准确 记录 问题 在 按 职责 范围 分类 处理 能够 当场 解决 的 立即 解决 需要 协调 的 说明 办理 时限 并 及时 反馈 进展"
+          },
+          {
+            "keypoint_id": "k3",
+            "score": 0.609764,
+            "covered": true,
+            "evidence_sentence_id": "s1",
+            "evidence_text": "考生 开始 作答 面对 群众 诉求 我 会 先 耐心 倾听 准确 记录 问题 在 按 职责 范围 分类 处理 能够 当场 解决 的 立即 解决 需要 协调 的 说明 办理 时限 并 及时 反馈 进展"
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "S0-T2-M4-A-0.8",
+      "module": "M4",
+      "input": {
+        "source_case": "S0-T2-M3-VECTOR-A",
+        "threshold": 0.8
+      },
+      "expected": {
+        "matches": [
+          {
+            "keypoint_id": "k1",
+            "score": 0.701657,
+            "covered": false,
+            "evidence_sentence_id": "s1",
+            "evidence_text": "考生 开始 作答 面对 群众 诉求 我 会 先 耐心 倾听 准确 记录 问题 在 按 职责 范围 分类 处理 能够 当场 解决 的 立即 解决 需要 协调 的 说明 办理 时限 并 及时 反馈 进展"
+          },
+          {
+            "keypoint_id": "k2",
+            "score": 0.583116,
+            "covered": false,
+            "evidence_sentence_id": "s1",
+            "evidence_text": "考生 开始 作答 面对 群众 诉求 我 会 先 耐心 倾听 准确 记录 问题 在 按 职责 范围 分类 处理 能够 当场 解决 的 立即 解决 需要 协调 的 说明 办理 时限 并 及时 反馈 进展"
+          },
+          {
+            "keypoint_id": "k3",
+            "score": 0.609764,
+            "covered": false,
+            "evidence_sentence_id": "s1",
+            "evidence_text": "考生 开始 作答 面对 群众 诉求 我 会 先 耐心 倾听 准确 记录 问题 在 按 职责 范围 分类 处理 能够 当场 解决 的 立即 解决 需要 协调 的 说明 办理 时限 并 及时 反馈 进展"
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "S0-T2-M3-VECTOR-TEXT",
+      "module": "M3",
+      "input": {
+        "transcript": {
+          "full_text": "面对群众诉求，我会先耐心倾听并记录关键信息。然后按职责范围分类处理，能当场解决的立即解决。需要协调的事项会说明办理时限，并及时反馈进展。",
+          "segments": [
+            {
+              "segment_id": "seg-text",
+              "start_sample": 0,
+              "end_sample": 0,
+              "text": "面对群众诉求，我会先耐心倾听并记录关键信息。然后按职责范围分类处理，能当场解决的立即解决。需要协调的事项会说明办理时限，并及时反馈进展。"
+            }
+          ]
+        },
+        "keypoints": [
+          {
+            "keypoint_id": "k1",
+            "text": "耐心倾听并记录群众诉求"
+          },
+          {
+            "keypoint_id": "k2",
+            "text": "按职责分类处理，当场解决"
+          },
+          {
+            "keypoint_id": "k3",
+            "text": "说明办理时限并及时反馈"
+          }
+        ]
+      },
+      "expected": {
+        "sentences_split": [
+          "面对群众诉求，我会先耐心倾听并记录关键信息。",
+          "然后按职责范围分类处理，能当场解决的立即解决。",
+          "需要协调的事项会说明办理时限，并及时反馈进展。"
+        ],
+        "dimension": 384,
+        "answer_sentences": [
+          {
+            "sentence_id": "s1",
+            "text": "面对群众诉求，我会先耐心倾听并记录关键信息。",
+            "vector_sha256": "D07CD4C05D47FE380E4093FD67D2D0521B601B01AD6AE4D896AA5380A1A59F50",
+            "vector_head8": [
+              -0.004459000192582607,
+              0.024685999378561974,
+              -0.07148099690675735,
+              -0.06227999925613403,
+              0.004354999866336584,
+              0.05025399848818779,
+              0.00241800001822412,
+              0.008990000002086163
+            ]
+          },
+          {
+            "sentence_id": "s2",
+            "text": "然后按职责范围分类处理，能当场解决的立即解决。",
+            "vector_sha256": "063733D51BA4E0BD8593FEB8C7139F0213CBE8CE44836B7A60097FE2689E79DF",
+            "vector_head8": [
+              -0.06712999939918518,
+              0.022789999842643738,
+              0.00027200000477023423,
+              -0.030226999893784523,
+              -0.03687800094485283,
+              -0.015263999812304974,
+              0.031902000308036804,
+              0.04948300123214722
+            ]
+          },
+          {
+            "sentence_id": "s3",
+            "text": "需要协调的事项会说明办理时限，并及时反馈进展。",
+            "vector_sha256": "DE9E3EB8A049BF1E20F85838259727A9F2ABEDE7E33EF7C1202928293646D653",
+            "vector_head8": [
+              -0.05433399975299835,
+              -0.002742999931797385,
+              -0.009273000061511993,
+              -0.02259100042283535,
+              -0.028130000457167625,
+              0.011469000019133091,
+              -0.01333799958229065,
+              -0.007313999813050032
+            ]
+          }
+        ],
+        "keypoints": [
+          {
+            "keypoint_id": "k1",
+            "vector_sha256": "8B59068DAA8D71D4980C224AA9F0614CB18494201FC0A63C2E6DA5B8DA235654",
+            "vector_head8": [
+              0.030621999874711037,
+              0.02339399978518486,
+              -0.09555400162935257,
+              -0.0346359983086586,
+              -0.012879000045359135,
+              0.012365000322461128,
+              0.0317469984292984,
+              -0.004007999785244465
+            ]
+          },
+          {
+            "keypoint_id": "k2",
+            "vector_sha256": "CC29B9FF7CC358D916E519F43FD0B97A3E5A6AD86D7F3EE10F3A4679E18F94A0",
+            "vector_head8": [
+              0.011536999605596066,
+              0.038541000336408615,
+              -0.03949299827218056,
+              -0.035016998648643494,
+              -0.03151100128889084,
+              -0.008987000212073326,
+              0.09747999906539917,
+              0.03313000127673149
+            ]
+          },
+          {
+            "keypoint_id": "k3",
+            "vector_sha256": "7866AB7924AB3B988AE9FC60B96FD014FC1C83D936532F498572572021E5EE18",
+            "vector_head8": [
+              -0.04361699894070625,
+              0.02656400017440319,
+              -0.028819000348448753,
+              -0.033080000430345535,
+              -0.021726999431848526,
+              -0.016679000109434128,
+              0.004627999849617481,
+              0.023360999301075935
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "S0-T2-M4-TEXT-0.5",
+      "module": "M4",
+      "input": {
+        "source_case": "S0-T2-M3-VECTOR-TEXT",
+        "threshold": 0.5
+      },
+      "expected": {
+        "matches": [
+          {
+            "keypoint_id": "k1",
+            "score": 0.773077,
+            "covered": true,
+            "evidence_sentence_id": "s1",
+            "evidence_text": "面对群众诉求，我会先耐心倾听并记录关键信息。"
+          },
+          {
+            "keypoint_id": "k2",
+            "score": 0.821228,
+            "covered": true,
+            "evidence_sentence_id": "s2",
+            "evidence_text": "然后按职责范围分类处理，能当场解决的立即解决。"
+          },
+          {
+            "keypoint_id": "k3",
+            "score": 0.852047,
+            "covered": true,
+            "evidence_sentence_id": "s3",
+            "evidence_text": "需要协调的事项会说明办理时限，并及时反馈进展。"
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "S0-T2-M4-TEXT-0.8",
+      "module": "M4",
+      "input": {
+        "source_case": "S0-T2-M3-VECTOR-TEXT",
+        "threshold": 0.8
+      },
+      "expected": {
+        "matches": [
+          {
+            "keypoint_id": "k1",
+            "score": 0.773077,
+            "covered": false,
+            "evidence_sentence_id": "s1",
+            "evidence_text": "面对群众诉求，我会先耐心倾听并记录关键信息。"
+          },
+          {
+            "keypoint_id": "k2",
+            "score": 0.821228,
+            "covered": true,
+            "evidence_sentence_id": "s2",
+            "evidence_text": "然后按职责范围分类处理，能当场解决的立即解决。"
+          },
+          {
+            "keypoint_id": "k3",
+            "score": 0.852047,
+            "covered": true,
+            "evidence_sentence_id": "s3",
+            "evidence_text": "需要协调的事项会说明办理时限，并及时反馈进展。"
+          }
+        ]
+      }
+    }
+  ],
+  "elapsed_ms": 23410.2
+}

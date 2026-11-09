@@ -1,0 +1,117 @@
+{
+  "schema_version": "v1",
+  "project": "公务员模拟面试语音作答分析",
+  "updated_at": "2026-11-09",
+  "maintainer": "彭雯青",
+  "note": "权重文件不入库，统一放在 models/weights/（已被 .gitignore 排除）。本文件只记录来源、版本、哈希、许可与运行配置；sha256 均为本地文件实测值。",
+  "assets": [
+    {
+      "asset_id": "m1-silero-vad",
+      "module": "M1",
+      "owner": "刘慧芳",
+      "status": "pending_owner",
+      "name": "Silero VAD",
+      "format": "onnx",
+      "source_url": "https://github.com/snakers4/silero-vad",
+      "license": "MIT（以仓库 LICENSE 为准）",
+      "version": "待定",
+      "sha256": null,
+      "local_path": "models/weights/silero_vad.onnx",
+      "config": {
+        "sample_rate_hz": 16000,
+        "window_samples": "待定（按导出图确认）"
+      }
+    },
+    {
+      "asset_id": "m2-vosk-cn-0.22",
+      "module": "M2",
+      "owner": "彭雯青",
+      "status": "verified_loaded",
+      "name": "vosk-model-cn-0.22",
+      "format": "zip（Kaldi 目录）",
+      "source_url": "https://alphacephei.com/vosk/models/vosk-model-cn-0.22.zip",
+      "mirror_url": "https://huggingface.co/alphacep/vosk-model-cn/resolve/main/vosk-model-cn-0.22.zip",
+      "license": "待核实（以模型包内 LICENSE 为准）",
+      "version": "cn-0.22",
+      "sha256": "7F5580BF7CA3D9E8CE8BE68337378950ED78EF974DF7A7D4EAD8DBE32BEC2FA1",
+      "sha256_scope": "vosk-model-cn-0.22.zip 安装包",
+      "size_bytes_zip": 1358736686,
+      "size_bytes_unzipped": 2143416000,
+      "local_path": "models/weights/vosk-model-cn-0.22/",
+      "config": {
+        "sample_rate_hz": 16000,
+        "channels": 1,
+        "sample_format": "s16le",
+        "model_dir_name": "vosk-model-cn-0.22",
+        "load_check": "vosk.Model 加载成功，KaldiRecognizer(16000) 初始化成功（2026-11-09，本机）"
+      }
+    },
+    {
+      "asset_id": "m3-minilm-multilingual-l12-onnx",
+      "module": "M3",
+      "owner": "彭雯青",
+      "status": "verified_inference",
+      "name": "paraphrase-multilingual-MiniLM-L12-v2 (ONNX, fp32)",
+      "format": "onnx",
+      "source_url": "https://huggingface.co/Xenova/paraphrase-multilingual-MiniLM-L12-v2",
+      "license": "Apache-2.0（以模型卡为准）",
+      "version": "Xenova ONNX export（具体 commit 待锁定）",
+      "sha256": "185AE63F47E17A7E8D30D0E6A3CDE6A6E4B79BC5B81666ECFFC279A6856CA113",
+      "size_bytes": 470268510,
+      "local_path": "models/weights/minilm-multilingual/model.onnx",
+      "config": {
+        "dimension": 384,
+        "max_length": 128,
+        "max_position_embeddings": 512,
+        "pooling": "mean",
+        "normalize": true,
+        "inputs": ["input_ids", "attention_mask", "token_type_ids"],
+        "outputs": ["last_hidden_state"],
+        "output_shape": "[batch, sequence, 384]",
+        "inference_check": "中文样例 token=11、UNK=0，输出 (1,11,384)，mean pooling 后 384 维、L2 norm=1.0；两句语义相近中文 cos=0.455（2026-11-09，本机）"
+      }
+    },
+    {
+      "asset_id": "m3-tokenizer-multilingual",
+      "module": "M3",
+      "owner": "彭雯青",
+      "status": "verified_encode",
+      "name": "paraphrase-multilingual-MiniLM-L12-v2 tokenizer",
+      "format": "tokenizer.json (SentencePiece)",
+      "source_url": "https://huggingface.co/Xenova/paraphrase-multilingual-MiniLM-L12-v2",
+      "license": "Apache-2.0（以模型卡为准）",
+      "version": "随 ONNX 导出锁定",
+      "sha256": "B60B6B43406A48BF3638526314F3D232D97058BC93472FF2DE930D43686FA441",
+      "size_bytes": 17082913,
+      "local_path": "models/weights/minilm-multilingual/tokenizer.json",
+      "config": {
+        "max_length": 128,
+        "truncation": true,
+        "padding": false,
+        "encode_check": "“公务员面试中如何回应群众诉求” → 11 tokens（公务员/面试/中/如何/回应/群众/诉/求），UNK=0，decode 可还原"
+      }
+    },
+    {
+      "asset_id": "m3-rejected-minilm-l6-v2",
+      "module": "M3",
+      "owner": "彭雯青",
+      "status": "rejected",
+      "name": "all-MiniLM-L6-v2 (ONNX)",
+      "format": "onnx",
+      "source_url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
+      "license": "Apache-2.0",
+      "sha256": "6FD5D72FE4589F189F8EBC006442DBB529BB7CE38F8082112682524616046452",
+      "size_bytes": 90405214,
+      "local_path": "models/weights/minilm-l6-v2/model.onnx",
+      "reject_reason": "英文 WordPiece 词表，中文句子被大量映射为 [UNK]（id=100）：实测“公务员面试中如何回应群众诉求”被 pad 到 128 token 且多数为 UNK，不能用于中文语义编码。2026-11-09 实测弃用。"
+    }
+  ],
+  "configs": {
+    "m4_matching": {
+      "threshold": 0.5,
+      "threshold_status": "provisional_until_s2",
+      "score_round_digits": 6,
+      "note": "阈值暂定 0.5，S2 用校准集确定后回填；两端必须读同一 config_version。"
+    }
+  }
+}

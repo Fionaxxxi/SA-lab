@@ -1,0 +1,51 @@
+{
+  "case_set": "S0-P6",
+  "generated_at": "2026-11-09T21:54:47",
+  "elapsed_ms": 17026.1,
+  "total": 7,
+  "passed": 7,
+  "cases": [
+    {
+      "case_id": "N1-odd-pcm",
+      "expected": "INVALID_PAYLOAD",
+      "actual": "INVALID_PAYLOAD",
+      "passed": true
+    },
+    {
+      "case_id": "N2-empty-segments",
+      "expected": "NO_SPEECH",
+      "actual": "NO_SPEECH",
+      "passed": true
+    },
+    {
+      "case_id": "N3-bad-base64",
+      "expected": "INVALID_PAYLOAD",
+      "actual": "INVALID_PAYLOAD",
+      "passed": true
+    },
+    {
+      "case_id": "N4-length-mismatch",
+      "expected": "INVALID_PAYLOAD",
+      "actual": "INVALID_PAYLOAD",
+      "passed": true
+    },
+    {
+      "case_id": "N5-model-missing",
+      "expected": "MODEL_UNAVAILABLE",
+      "actual": "MODEL_UNAVAILABLE",
+      "passed": true
+    },
+    {
+      "case_id": "N6-empty-text",
+      "expected": "INVALID_PAYLOAD",
+      "actual": "INVALID_PAYLOAD",
+      "passed": true
+    },
+    {
+      "case_id": "N7-zero-vector",
+      "expected": "INVALID_PAYLOAD",
+      "actual": "INVALID_PAYLOAD",
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "case": "S0-P2",
+  "wav": "s0_case_a.wav",
+  "wav_sha256": "A60E61DA553E7B65C1BE473D5A0A943FFE8284F8152FB7E175D4182CE6A02B2F",
+  "audio": {
+    "channels": 1,
+    "sample_width_bytes": 2,
+    "sample_rate_hz": 16000,
+    "sample_count": 311440,
+    "duration_sec": 19.465
+  },
+  "elapsed_ms": 20458.5,
+  "error": null,
+  "transcript": {
+    "full_text": "考生 开始 作答 面对 群众 诉求 我 会 先 耐心 倾听 准确 记录 问题 在 按 职责 范围 分类 处理 能够 当场 解决 的 立即 解决 需要 协调 的 说明 办理 时限 并 及时 反馈 进展",
+    "segments": [
+      {
+        "segment_id": "seg-1",
+        "start_sample": 0,
+        "end_sample": 311440,
+        "text": "考生 开始 作答 面对 群众 诉求 我 会 先 耐心 倾听 准确 记录 问题 在 按 职责 范围 分类 处理 能够 当场 解决 的 立即 解决 需要 协调 的 说明 办理 时限 并 及时 反馈 进展"
+      }
+    ]
+  }
+}

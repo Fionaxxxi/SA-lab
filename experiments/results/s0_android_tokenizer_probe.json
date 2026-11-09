@@ -1,0 +1,218 @@
+{
+  "tokenizer": "D:\\Computation_Partitioning\\SA-lab\\models\\weights\\minilm-multilingual\\tokenizer.json",
+  "normalizer_type": "Precompiled",
+  "pre_tokenizer": "Sequence",
+  "model_type": "Unigram",
+  "vocab_size": 250002,
+  "n_samples": 7,
+  "n_same": 5,
+  "samples": [
+    {
+      "text": "面对群众诉求我会先耐心倾听准确记录问题",
+      "same_ids": true,
+      "len_base": 15,
+      "len_no_normalizer": 15,
+      "ids_base_head": [
+        0,
+        6,
+        26811,
+        42444,
+        78119,
+        8681,
+        89809,
+        2996,
+        117388,
+        107283,
+        10456,
+        63472,
+        42750,
+        4258,
+        2
+      ],
+      "ids_no_normalizer_head": [
+        0,
+        6,
+        26811,
+        42444,
+        78119,
+        8681,
+        89809,
+        2996,
+        117388,
+        107283,
+        10456,
+        63472,
+        42750,
+        4258,
+        2
+      ]
+    },
+    {
+      "text": "面对群众诉求，我会先耐心倾听。",
+      "same_ids": false,
+      "len_base": 14,
+      "len_no_normalizer": 14,
+      "ids_base_head": [
+        0,
+        6,
+        26811,
+        42444,
+        78119,
+        8681,
+        4,
+        89809,
+        2996,
+        117388,
+        107283,
+        10456,
+        30,
+        2
+      ],
+      "ids_no_normalizer_head": [
+        0,
+        6,
+        26811,
+        42444,
+        78119,
+        8681,
+        3,
+        89809,
+        2996,
+        117388,
+        107283,
+        10456,
+        30,
+        2
+      ]
+    },
+    {
+      "text": "面对群众诉求,我会先耐心倾听.",
+      "same_ids": true,
+      "len_base": 14,
+      "len_no_normalizer": 14,
+      "ids_base_head": [
+        0,
+        6,
+        26811,
+        42444,
+        78119,
+        8681,
+        4,
+        89809,
+        2996,
+        117388,
+        107283,
+        10456,
+        5,
+        2
+      ],
+      "ids_no_normalizer_head": [
+        0,
+        6,
+        26811,
+        42444,
+        78119,
+        8681,
+        4,
+        89809,
+        2996,
+        117388,
+        107283,
+        10456,
+        5,
+        2
+      ]
+    },
+    {
+      "text": "2024年招录公告",
+      "same_ids": true,
+      "len_base": 8,
+      "len_no_normalizer": 8,
+      "ids_base_head": [
+        0,
+        387,
+        2357,
+        470,
+        24102,
+        49028,
+        34195,
+        2
+      ],
+      "ids_no_normalizer_head": [
+        0,
+        387,
+        2357,
+        470,
+        24102,
+        49028,
+        34195,
+        2
+      ]
+    },
+    {
+      "text": "２０２４年招录公告",
+      "same_ids": false,
+      "len_base": 8,
+      "len_no_normalizer": 8,
+      "ids_base_head": [
+        0,
+        387,
+        2357,
+        470,
+        24102,
+        49028,
+        34195,
+        2
+      ],
+      "ids_no_normalizer_head": [
+        0,
+        6,
+        3,
+        470,
+        24102,
+        49028,
+        34195,
+        2
+      ]
+    },
+    {
+      "text": "Hello World",
+      "same_ids": true,
+      "len_base": 4,
+      "len_no_normalizer": 4,
+      "ids_base_head": [
+        0,
+        35378,
+        6661,
+        2
+      ],
+      "ids_no_normalizer_head": [
+        0,
+        35378,
+        6661,
+        2
+      ]
+    },
+    {
+      "text": "hello world",
+      "same_ids": true,
+      "len_base": 5,
+      "len_no_normalizer": 5,
+      "ids_base_head": [
+        0,
+        33600,
+        31,
+        8999,
+        2
+      ],
+      "ids_no_normalizer_head": [
+        0,
+        33600,
+        31,
+        8999,
+        2
+      ]
+    }
+  ],
+  "interpretation": "所有样本一致 → 去掉 normalizer 不会改变编码，Android 可跳过 charsmap；仅部分一致 → 需在 Android 侧补轻量归一化（至少 NFKC + 去标点）；全部不一致 → 必须实现 precompiled_charsmap 或更换 tokenizer 方案。"
+}
