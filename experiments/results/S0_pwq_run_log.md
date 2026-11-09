@@ -316,4 +316,4 @@ for ($i = 1; $i -le 3; $i++) {
 | S1 Android 端 M3 可行性 | 已评估 + int8 实测 | 见 `docs/S1_Android端M3可行性评估.md`；tokenizer 可纯 Java 实现，fp32 448 MB / int8 113 MB，真实占用待真机 |
 | S2 语料与统计 | 脚本就绪，数据未采 | `compute_metrics.py` 已写并自测；缺真人录音与两台手机 |
 | S3 跨端对照 | 未开始 | 依赖 S1 |
-| git 提交 | 已推送 | `feature/pwq` @ `10ab049`，作者 `Yin-pro-akf <2146555838+Yin-pro-akf@users.noreply.github.com>` |
+| git 提交 | 已推送 | 分支 `feature/pwq`，作者 `Yin-pro-akf <2146555838+Yin-pro-akf@users.noreply.github.com>`；具体提交号以远端分支 HEAD 为准 |
