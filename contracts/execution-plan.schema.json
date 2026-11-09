@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Execution plan v1",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "plan_version": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "mode": {
+      "enum": [
+        "LOCAL",
+        "REMOTE",
+        "MIN_CUT",
+        "DYNAMIC"
+      ]
+    },
+    "device_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "model_version": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "config_version": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "cost_table_version": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "assignments": {
+      "type": "object",
+      "properties": {
+        "M0": {
+          "const": "LOCAL"
+        },
+        "M1": {
+          "enum": [
+            "LOCAL",
+            "REMOTE"
+          ]
+        },
+        "M2": {
+          "enum": [
+            "LOCAL",
+            "REMOTE"
+          ]
+        },
+        "M3": {
+          "enum": [
+            "LOCAL",
+            "REMOTE"
+          ]
+        },
+        "M4": {
+          "enum": [
+            "LOCAL",
+            "REMOTE"
+          ]
+        },
+        "M5": {
+          "const": "LOCAL"
+        }
+      },
+      "required": [
+        "M0",
+        "M1",
+        "M2",
+        "M3",
+        "M4",
+        "M5"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema_version",
+    "plan_version",
+    "mode",
+    "device_id",
+    "model_version",
+    "config_version",
+    "cost_table_version",
+    "assignments"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "mode": {
+            "const": "LOCAL"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "assignments": {
+            "properties": {
+              "M1": {
+                "const": "LOCAL"
+              },
+              "M2": {
+                "const": "LOCAL"
+              },
+              "M3": {
+                "const": "LOCAL"
+              },
+              "M4": {
+                "const": "LOCAL"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "mode": {
+            "const": "REMOTE"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "assignments": {
+            "properties": {
+              "M1": {
+                "const": "REMOTE"
+              },
+              "M2": {
+                "const": "REMOTE"
+              },
+              "M3": {
+                "const": "REMOTE"
+              },
+              "M4": {
+                "const": "REMOTE"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

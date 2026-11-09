@@ -1,0 +1,432 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Module request v1",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "task_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "attempt": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2147483647
+    },
+    "module_id": {
+      "enum": [
+        "M1",
+        "M2",
+        "M3",
+        "M4"
+      ]
+    },
+    "plan_version": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "model_version": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "config_version": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "remaining_budget_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2147483647
+    },
+    "payload": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema_version",
+    "task_id",
+    "attempt",
+    "module_id",
+    "plan_version",
+    "model_version",
+    "config_version",
+    "remaining_budget_ms",
+    "payload"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "module_id": {
+            "const": "M1"
+          }
+        },
+        "required": [
+          "module_id"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/M1Input"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "module_id": {
+            "const": "M2"
+          }
+        },
+        "required": [
+          "module_id"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/M1Output"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "module_id": {
+            "const": "M3"
+          }
+        },
+        "required": [
+          "module_id"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/M3Input"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "module_id": {
+            "const": "M4"
+          }
+        },
+        "required": [
+          "module_id"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/M3Output"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "M1Input": {
+      "type": "object",
+      "properties": {
+        "audio": {
+          "type": "object",
+          "properties": {
+            "sample_rate_hz": {
+              "const": 16000
+            },
+            "channels": {
+              "const": 1
+            },
+            "sample_format": {
+              "const": "s16le"
+            },
+            "sample_count": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 960000
+            },
+            "pcm_b64": {
+              "type": "string",
+              "contentEncoding": "base64",
+              "minLength": 4
+            }
+          },
+          "required": [
+            "sample_rate_hz",
+            "channels",
+            "sample_format",
+            "sample_count",
+            "pcm_b64"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "audio"
+      ],
+      "additionalProperties": false
+    },
+    "M1Output": {
+      "type": "object",
+      "properties": {
+        "segments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "segment_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+              },
+              "start_sample": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 960000
+              },
+              "end_sample": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 960000
+              },
+              "pcm_b64": {
+                "type": "string",
+                "contentEncoding": "base64",
+                "minLength": 4
+              }
+            },
+            "required": [
+              "segment_id",
+              "start_sample",
+              "end_sample",
+              "pcm_b64"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "segments"
+      ],
+      "additionalProperties": false
+    },
+    "Transcript": {
+      "type": "object",
+      "properties": {
+        "full_text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "segments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "segment_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+              },
+              "start_sample": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 960000
+              },
+              "end_sample": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 960000
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "segment_id",
+              "start_sample",
+              "end_sample",
+              "text"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "full_text",
+        "segments"
+      ],
+      "additionalProperties": false
+    },
+    "M3Input": {
+      "type": "object",
+      "properties": {
+        "transcript": {
+          "$ref": "#/$defs/Transcript"
+        },
+        "keypoints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "keypoint_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "keypoint_id",
+              "text"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "transcript",
+        "keypoints"
+      ],
+      "additionalProperties": false
+    },
+    "M3Output": {
+      "type": "object",
+      "properties": {
+        "embeddings": {
+          "type": "object",
+          "properties": {
+            "dimension": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4096
+            },
+            "answer_sentences": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "sentence_id": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+                  },
+                  "text": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "vector": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "minItems": 1
+                  }
+                },
+                "required": [
+                  "sentence_id",
+                  "text",
+                  "vector"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 1
+            },
+            "keypoints": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "keypoint_id": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+                  },
+                  "vector": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "minItems": 1
+                  }
+                },
+                "required": [
+                  "keypoint_id",
+                  "vector"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "dimension",
+            "answer_sentences",
+            "keypoints"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "embeddings"
+      ],
+      "additionalProperties": false
+    },
+    "M4Output": {
+      "type": "object",
+      "properties": {
+        "matches": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "keypoint_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+              },
+              "score": {
+                "type": "number",
+                "minimum": -1,
+                "maximum": 1
+              },
+              "covered": {
+                "type": "boolean"
+              },
+              "evidence_sentence_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+              },
+              "evidence_text": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "keypoint_id",
+              "score",
+              "covered",
+              "evidence_sentence_id",
+              "evidence_text"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "matches"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

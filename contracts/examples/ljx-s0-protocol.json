@@ -1,0 +1,201 @@
+{
+  "sample_id": "ljx-m4-demo-v1",
+  "input_sha256": "83e4061f22856beab244e805c804f9d7fd0072abb51b0a7510404016d46c4874",
+  "schema_version": 1,
+  "model_version": "modelset-demo",
+  "config_version": "rules-demo",
+  "generated_at": "2026-11-09",
+  "generated_by": "Codex",
+  "tolerance": {
+    "score_abs": 0.00001,
+    "elapsed_ms": "runtime-dependent"
+  },
+  "cases": [
+    {
+      "id": "S0-T3-success",
+      "request": {
+        "schema_version": 1,
+        "task_id": "fixture-m4-001",
+        "attempt": 1,
+        "module_id": "M4",
+        "plan_version": "p-remote",
+        "model_version": "modelset-demo",
+        "config_version": "rules-demo",
+        "remaining_budget_ms": 2000,
+        "payload": {
+          "embeddings": {
+            "dimension": 2,
+            "answer_sentences": [
+              {
+                "sentence_id": "s1",
+                "text": "先调查居民需求",
+                "vector": [
+                  1,
+                  0
+                ]
+              }
+            ],
+            "keypoints": [
+              {
+                "keypoint_id": "k1",
+                "vector": [
+                  1,
+                  0
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "expected": {
+        "http_status": 200,
+        "body": {
+          "schema_version": 1,
+          "task_id": "fixture-m4-001",
+          "attempt": 1,
+          "module_id": "M4",
+          "plan_version": "p-remote",
+          "model_version": "modelset-demo",
+          "config_version": "rules-demo",
+          "status": "OK",
+          "executor": "REMOTE",
+          "elapsed_ms": 0,
+          "output": {
+            "matches": [
+              {
+                "keypoint_id": "k1",
+                "score": 1,
+                "covered": true,
+                "evidence_sentence_id": "s1",
+                "evidence_text": "先调查居民需求"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "S0-T3-missing",
+      "request": {
+        "schema_version": 1,
+        "attempt": 1,
+        "module_id": "M4",
+        "plan_version": "p-remote",
+        "model_version": "modelset-demo",
+        "config_version": "rules-demo",
+        "remaining_budget_ms": 2000,
+        "payload": {
+          "embeddings": {
+            "dimension": 2,
+            "answer_sentences": [
+              {
+                "sentence_id": "s1",
+                "text": "先调查居民需求",
+                "vector": [
+                  1,
+                  0
+                ]
+              }
+            ],
+            "keypoints": [
+              {
+                "keypoint_id": "k1",
+                "vector": [
+                  1,
+                  0
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "expected": {
+        "http_status": 400,
+        "code": "INVALID_PAYLOAD"
+      }
+    },
+    {
+      "id": "S0-T3-old-schema",
+      "request": {
+        "schema_version": 0,
+        "task_id": "fixture-m4-001",
+        "attempt": 1,
+        "module_id": "M4",
+        "plan_version": "p-remote",
+        "model_version": "modelset-demo",
+        "config_version": "rules-demo",
+        "remaining_budget_ms": 2000,
+        "payload": {
+          "embeddings": {
+            "dimension": 2,
+            "answer_sentences": [
+              {
+                "sentence_id": "s1",
+                "text": "先调查居民需求",
+                "vector": [
+                  1,
+                  0
+                ]
+              }
+            ],
+            "keypoints": [
+              {
+                "keypoint_id": "k1",
+                "vector": [
+                  1,
+                  0
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "expected": {
+        "http_status": 409,
+        "code": "VERSION_MISMATCH"
+      }
+    },
+    {
+      "id": "S0-T3-expired",
+      "request": {
+        "schema_version": 1,
+        "task_id": "fixture-expired",
+        "attempt": 1,
+        "module_id": "M4",
+        "plan_version": "p-remote",
+        "model_version": "modelset-demo",
+        "config_version": "rules-demo",
+        "remaining_budget_ms": 0,
+        "payload": {
+          "embeddings": {
+            "dimension": 2,
+            "answer_sentences": [
+              {
+                "sentence_id": "s1",
+                "text": "先调查居民需求",
+                "vector": [
+                  1,
+                  0
+                ]
+              }
+            ],
+            "keypoints": [
+              {
+                "keypoint_id": "k1",
+                "vector": [
+                  1,
+                  0
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "expected": {
+        "http_status": 504,
+        "code": "DEADLINE_EXCEEDED"
+      }
+    }
+  ],
+  "expected": "各用例均为 S0 协议测试，expected 中的结果为预登记期望。"
+}
