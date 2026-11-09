@@ -1,0 +1,151 @@
+{
+  "schema_version": "v1",
+  "probe": "M3 dynamic quantization (int8 weights)",
+  "generated_at": "2026-11-09T23:57:18",
+  "host_note": "本机 CPU、单线程 intra_op；不代表手机端性能",
+  "fp32": {
+    "path": "D:\\Computation_Partitioning\\SA-lab\\models\\weights\\minilm-multilingual\\model.onnx",
+    "bytes": 470268510,
+    "mb": 448.48,
+    "sha256": "185AE63F47E17A7E8D30D0E6A3CDE6A6E4B79BC5B81666ECFFC279A6856CA113",
+    "session_load_ms": 1009.1,
+    "input_names": [
+      "input_ids",
+      "attention_mask",
+      "token_type_ids"
+    ]
+  },
+  "int8": {
+    "path": "D:\\Computation_Partitioning\\SA-lab\\models\\weights\\minilm-multilingual\\model_int8.onnx",
+    "bytes": 118101091,
+    "mb": 112.63,
+    "sha256": "2CA385CD01D73FEA99148F64256D7F7947CC56D7FDBE5C86B34434D4C80CA8F5",
+    "session_load_ms": 661.4,
+    "size_ratio_vs_fp32": 0.2511,
+    "quantize_ms": 10856.1
+  },
+  "dimension": 384,
+  "vector_cosine_fp32_vs_int8": {
+    "min": 0.98462194,
+    "mean": 0.99043897,
+    "max": 0.99343884,
+    "per_sentence": [
+      0.99039501,
+      0.99179476,
+      0.9900254,
+      0.99316776,
+      0.99267358,
+      0.98942566,
+      0.99343884,
+      0.99122143,
+      0.98462194,
+      0.9876253
+    ]
+  },
+  "vector_abs_diff": {
+    "max": 0.02670104,
+    "mean": 0.00554518,
+    "per_sentence_max": [
+      0.02064153,
+      0.01837577,
+      0.021892,
+      0.01638503,
+      0.01700585,
+      0.02431547,
+      0.01693926,
+      0.02185694,
+      0.02670104,
+      0.02539578
+    ]
+  },
+  "matching": {
+    "sentence_count": 10,
+    "keypoint_count": 3,
+    "max_score_abs_diff": 0.059434,
+    "mean_score_abs_diff": 0.017632,
+    "top1_same_count": 3,
+    "rows": [
+      {
+        "keypoint_id": "k1",
+        "fp32_best_sentence": 0,
+        "fp32_best_score": 0.773077,
+        "int8_best_sentence": 0,
+        "int8_best_score": 0.768049,
+        "top1_same": true,
+        "max_score_abs_diff": 0.029824,
+        "threshold_0_5_flip": false,
+        "threshold_0_8_flip": false
+      },
+      {
+        "keypoint_id": "k2",
+        "fp32_best_sentence": 1,
+        "fp32_best_score": 0.821227,
+        "int8_best_sentence": 1,
+        "int8_best_score": 0.826294,
+        "top1_same": true,
+        "max_score_abs_diff": 0.059434,
+        "threshold_0_5_flip": false,
+        "threshold_0_8_flip": false
+      },
+      {
+        "keypoint_id": "k3",
+        "fp32_best_sentence": 2,
+        "fp32_best_score": 0.852047,
+        "int8_best_sentence": 2,
+        "int8_best_score": 0.846463,
+        "top1_same": true,
+        "max_score_abs_diff": 0.046883,
+        "threshold_0_5_flip": false,
+        "threshold_0_8_flip": false
+      }
+    ]
+  },
+  "latency_ms": {
+    "fp32": {
+      "repeat": 15,
+      "warmup": 3,
+      "p50_ms": 9.995,
+      "p90_ms": 10.775,
+      "min_ms": 9.393,
+      "max_ms": 10.984,
+      "mean_ms": 10.139
+    },
+    "int8": {
+      "repeat": 15,
+      "warmup": 3,
+      "p50_ms": 3.669,
+      "p90_ms": 3.983,
+      "min_ms": 3.435,
+      "max_ms": 4.094,
+      "mean_ms": 3.699
+    },
+    "speedup_p50": 2.724
+  },
+  "sentences": [
+    "面对群众诉求，我会先耐心倾听并记录关键信息。",
+    "然后按职责范围分类处理，能当场解决的立即解决。",
+    "需要协调的事项会说明办理时限，并及时反馈进展。",
+    "考生开始作答",
+    "首先我会稳定情绪，弄清对方最关心的问题。",
+    "然后核实事实依据，避免主观判断。",
+    "最后提出可执行的方案，并约定下一次沟通时间。",
+    "能够当场解决的立即解决，需要协调的说明办理时限并及时反馈进展。",
+    "群众来办事时情绪激动是常见情况，我会先把人请到安静的地方坐下，倒一杯水，让对方把话说完，不打断、不反驳，同时把时间、地点、涉及人员和诉求逐项记下来，再复述一遍确认没有理解偏差，最后说明我接下来会怎么处理、多久给答复。",
+    "如果事项超出我的职责范围，我会明确告知应该找哪个窗口、需要带哪些材料，并帮忙对接经办人，避免群众来回跑。"
+  ],
+  "keypoints": [
+    {
+      "keypoint_id": "k1",
+      "text": "耐心倾听并记录群众诉求"
+    },
+    {
+      "keypoint_id": "k2",
+      "text": "按职责分类处理，当场解决"
+    },
+    {
+      "keypoint_id": "k3",
+      "text": "说明办理时限并及时反馈"
+    }
+  ],
+  "total_ms": 15825.2
+}

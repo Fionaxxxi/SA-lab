@@ -142,6 +142,59 @@ token 序列（S0 锁定值）：
 RTF 0.1815 只能代表“本机 + 单段 + 合成音 + vosk 0.3.45”，不能外推到手机；
 手机 CPU 单核性能通常弱于本机，S1 必须实测。
 
+### 2.7 金样例复现性（3 次重跑）
+
+2026-11-09 追加，脚本 `experiments/scripts/s0_repro_check.py`，比对结果 `s0_repro_check.json`。
+
+| 项 | 结果 |
+|---|---|
+| 重跑次数 | 3 |
+| 输出文件 | `experiments/results/repro/golden_run_1..3.json`，字节数均 18180 |
+| 用例数 | 9 |
+| 内容完全一致的用例 | **9 / 9** |
+| 差异数 | 0 |
+| 忽略字段 | `generated_at`、`elapsed_ms`（每次运行必然变化） |
+
+结论：同一机器、同一 venv、`intra_op_num_threads=1` 下，M2 转写、M3 向量、M4 匹配逐用例可复现，
+金样例可以作为本机回归基线。
+
+边界：这**不是**跨端一致性证明。手机端 vosk 0.3.47、不同 CPU 浮点实现、int8 量化都可能改变数值，
+S1 仍需刘慧芳在真机复跑后比对；容差若超 1e-4，按实测放宽并写偏差单。
+
+### 2.8 M3 int8 动态量化（S1 体积/精度预研）
+
+2026-11-09 追加，脚本 `experiments/scripts/s0_m3_quant_probe.py`，数据 `s0_m3_quant_probe.json`。
+量化方式 `onnxruntime.quantization.quantize_dynamic(weight_type=QInt8)`，权重 int8、激活 fp32。
+
+| 项 | fp32 | int8 | 变化 |
+|---|---:|---:|---|
+| 文件体积 | 448.48 MB | **112.63 MB** | 25.11% |
+| 文件字节 | 470268510 | 118101091 | -352167419 |
+| 会话加载 | 1009.1 ms | 661.4 ms | -34.5% |
+| 单句推理 p50 | 9.995 ms | **3.669 ms** | 2.72× |
+| 单句推理 p90 | 10.775 ms | 3.983 ms | 2.70× |
+| 量化耗时 | — | 10856.1 ms | 一次性 |
+
+精度（10 句 × 3 要点）：
+
+| 指标 | 值 |
+|---|---|
+| 同句向量余弦（fp32 vs int8） | min 0.9846 / mean 0.9904 / max 0.9934 |
+| 向量分量最大绝对差 | 0.0267 |
+| 匹配分数最大绝对差 | **0.0594**（k2），均值 0.0176 |
+| top-1 证据句一致 | 3 / 3 |
+| 0.5 / 0.8 阈值翻转 | 本批样本 0 / 0 |
+
+结论：
+
+- **体积是主要收益**：448 MB → 113 MB，是 S1 手机 OOM 风险最直接的缓解手段；但 113 MB 仍需真机确认
+  加载峰值（ORT 会把模型读入内存，瞬时占用可能接近 2×）。
+- **精度代价不可忽略**：分数偏差最大 0.059，真实分数落在阈值 ±0.06 内就可能翻转判定。
+  本批 10 句没有翻转，样本量不足以证明校准集也不会。
+- **int8 与 fp32 数值不等价**：`contracts/examples/golden-s0.json` 的期望值只对 fp32 有效；
+  S1 若采用 int8，必须单独生成期望值或写明容差，不能直接复用。
+- 本机数据不代表手机：ARM CPU、ORT Android 构建、NEON 优化都会改变耗时。
+
 ---
 
 ## 3. 偏差、限制与已知风险（必须随代码一起交接）
@@ -162,6 +215,8 @@ RTF 0.1815 只能代表“本机 + 单段 + 合成音 + vosk 0.3.45”，不能�
    两者不是同一把尺子，S2 校准集必须在**最终切句策略**下采集，S2 前不得对外宣称匹配准确率。
 7. **异常用例覆盖的是模块边界，不是端到端。** 真机的权限拒绝、麦克风占用、任务取消等场景尚未验证。
 8. **未做性能结论。** 本轮只记录单次耗时与启动开销，不是 S2 的 P90/RTF 统计（样本量不足、设备不同）。
+9. **int8 量化会改变数值。** 体积降到 fp32 的 25.11%，同句向量余弦最低 0.9846，但匹配分数最大差 0.0594；
+   阈值 0.5/0.8 在边界附近可能翻转。int8 只作“体积换精度”的备选，是否采用由 S1 真机结果与 S2 校准决定。
 
 ---
 
@@ -209,6 +264,26 @@ $root = "D:\Computation_Partitioning\SA-lab"
 
 # 9) Android tokenizer 可行性探针
 & $py "$root\experiments\scripts\s0_android_tokenizer_probe.py"
+
+# 10) 金样例复现性（3 次重跑 + 逐用例比对）
+for ($i = 1; $i -le 3; $i++) {
+  & $py "$root\experiments\scripts\make_golden_s0.py" `
+    --wav-a "$root\experiments\samples\local\s0_case_a.wav" `
+    --wav-b "$root\experiments\samples\local\s0_case_b.wav" `
+    --out "$root\experiments\results\repro\golden_run_$i.json"
+}
+& $py "$root\experiments\scripts\s0_repro_check.py" `
+  --runs "$root\experiments\results\repro\golden_run_1.json" `
+         "$root\experiments\results\repro\golden_run_2.json" `
+         "$root\experiments\results\repro\golden_run_3.json" `
+  --out "$root\experiments\results\s0_repro_check.json"
+
+# 11) M3 int8 动态量化探针（需 pip install onnx）
+& $py "$root\experiments\scripts\s0_m3_quant_probe.py" `
+  --model "$root\models\weights\minilm-multilingual\model.onnx" `
+  --tokenizer "$root\models\weights\minilm-multilingual\tokenizer.json" `
+  --out-model "$root\models\weights\minilm-multilingual\model_int8.onnx" `
+  --out "$root\experiments\results\s0_m3_quant_probe.json"
 ```
 
 前置：`models/weights/vosk-model-cn-0.22/` 与 `models/weights/minilm-multilingual/` 已按 manifest 放好；
@@ -238,7 +313,7 @@ $root = "D:\Computation_Partitioning\SA-lab"
 |---|---|---|
 | S0-P7 契约评审 | 材料已出，待签字 | 需三人共同确认（C1–C7） |
 | S1 Kotlin（M2/M3/M4） | 未开始 | `mobile/` 无 Gradle 骨架、无 `gradlew`、无真机 |
-| S1 Android 端 M3 可行性 | 已评估，待真机 | 见 `docs/S1_Android端M3可行性评估.md`；tokenizer 可纯 Java 实现，模型 470 MB 体积风险未实测 |
+| S1 Android 端 M3 可行性 | 已评估 + int8 实测 | 见 `docs/S1_Android端M3可行性评估.md`；tokenizer 可纯 Java 实现，fp32 448 MB / int8 113 MB，真实占用待真机 |
 | S2 语料与统计 | 脚本就绪，数据未采 | `compute_metrics.py` 已写并自测；缺真人录音与两台手机 |
 | S3 跨端对照 | 未开始 | 依赖 S1 |
-| git 提交 | 未提交 | 全局身份为 `Yin-pro-akf`，与组员身份不符，待确认后提交 |
+| git 提交 | 已推送 | `feature/pwq` @ `10ab049`，作者 `Yin-pro-akf <2146555838+Yin-pro-akf@users.noreply.github.com>` |

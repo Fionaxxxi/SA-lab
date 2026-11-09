@@ -72,6 +72,32 @@
       }
     },
     {
+      "asset_id": "m3-minilm-multilingual-l12-onnx-int8",
+      "module": "M3",
+      "owner": "彭雯青",
+      "status": "verified_inference_probe",
+      "name": "paraphrase-multilingual-MiniLM-L12-v2 (ONNX, dynamic int8)",
+      "format": "onnx（onnxruntime quantize_dynamic, weight_type=QInt8）",
+      "source_url": "由本地 fp32 量化生成，非独立下载",
+      "derived_from": "m3-minilm-multilingual-l12-onnx",
+      "license": "Apache-2.0（继承上游模型）",
+      "version": "本地量化产物 2026-11-09",
+      "sha256": "2CA385CD01D73FEA99148F64256D7F7947CC56D7FDBE5C86B34434D4C80CA8F5",
+      "size_bytes": 118101091,
+      "local_path": "models/weights/minilm-multilingual/model_int8.onnx",
+      "config": {
+        "quantize_method": "quantize_dynamic(weight_type=QInt8)",
+        "dimension": 384,
+        "max_length": 128,
+        "pooling": "mean",
+        "normalize": true,
+        "size_ratio_vs_fp32": 0.2511,
+        "precision_probe": "10 句 × 3 要点：向量余弦 min=0.9846 / mean=0.9904；匹配分数最大绝对差 0.0594、均值 0.0176；top1 证据句 3/3 一致；0.5/0.8 阈值在本批样本无翻转",
+        "latency_probe": "本机单线程 p50 3.669 ms（fp32 9.995 ms，2.72×）"
+      },
+      "usage_constraint": "数值与 fp32 不等价：不能直接用 fp32 的 golden 期望值校验 int8；阈值附近 ±0.06 存在翻转风险，需在 S2 校准集复核"
+    },
+    {
       "asset_id": "m3-tokenizer-multilingual",
       "module": "M3",
       "owner": "彭雯青",

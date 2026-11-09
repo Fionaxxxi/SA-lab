@@ -1,0 +1,83 @@
+{
+  "schema_version": "v1",
+  "runs": [
+    {
+      "path": "D:\\Computation_Partitioning\\SA-lab\\experiments\\results\\repro\\golden_run_1.json",
+      "sha256": "CF31D9B0EE424D4CE0ADB3A215FF2D1AD3756ED8141161B22901B97351DB93F4"
+    },
+    {
+      "path": "D:\\Computation_Partitioning\\SA-lab\\experiments\\results\\repro\\golden_run_2.json",
+      "sha256": "F204BFD5C49734588D97E55E3A935D3700159FE51C7C3E51BDC399BBE7D08946"
+    },
+    {
+      "path": "D:\\Computation_Partitioning\\SA-lab\\experiments\\results\\repro\\golden_run_3.json",
+      "sha256": "BA8B8282AB360B30ABA89475BED7CE78D207E3CA77F7804FE6A8D5EC97F9531A"
+    }
+  ],
+  "run_visible_keys": [
+    "case_set",
+    "cases",
+    "generated_by",
+    "model_versions",
+    "provenance",
+    "schema_version"
+  ],
+  "ignored_volatile_keys": [
+    "elapsed_ms",
+    "generated_at"
+  ],
+  "case_count": 9,
+  "all_cases_identical": true,
+  "cases": [
+    {
+      "case_id": "S0-T2-M2-A",
+      "identical": true,
+      "diff": []
+    },
+    {
+      "case_id": "S0-T2-M2-B",
+      "identical": true,
+      "diff": []
+    },
+    {
+      "case_id": "S0-T2-M3-TOKEN",
+      "identical": true,
+      "diff": []
+    },
+    {
+      "case_id": "S0-T2-M3-VECTOR-A",
+      "identical": true,
+      "diff": []
+    },
+    {
+      "case_id": "S0-T2-M3-VECTOR-TEXT",
+      "identical": true,
+      "diff": []
+    },
+    {
+      "case_id": "S0-T2-M4-A-0.5",
+      "identical": true,
+      "diff": []
+    },
+    {
+      "case_id": "S0-T2-M4-A-0.8",
+      "identical": true,
+      "diff": []
+    },
+    {
+      "case_id": "S0-T2-M4-TEXT-0.5",
+      "identical": true,
+      "diff": []
+    },
+    {
+      "case_id": "S0-T2-M4-TEXT-0.8",
+      "identical": true,
+      "diff": []
+    }
+  ],
+  "non_case_field_diff": [],
+  "summary": {
+    "identical_cases": 9,
+    "different_cases": 0
+  }
+}
