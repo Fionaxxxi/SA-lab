@@ -1,0 +1,41 @@
+# 本地材料和过程证据
+/.evidence/
+/语音回答语义分析与反馈系统_三人分工实施计划.md
+/*.doc
+/*.docx
+/~$*
+/docs/local/
+
+# 本机配置、凭据及签名
+.env
+.env.*
+!.env.example
+local.properties
+*.jks
+*.keystore
+*.pem
+*.key
+
+# Android / Python 构建产物
+.gradle/
+.idea/
+build/
+captures/
+*.apk
+*.aab
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+.ipynb_checkpoints/
+
+# 权重、原始录音和实验运行数据
+/models/weights/
+/experiments/samples/local/
+/experiments/results/raw/
+*.onnx
+*.gguf
+*.safetensors
+*.wav
+*.pcm
+*.zip

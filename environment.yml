@@ -1,0 +1,7 @@
+# S0 环境起点。服务、推理和统计依赖待兼容性验证后锁定。
+name: software_architecture
+channels:
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
