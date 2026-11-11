@@ -18,20 +18,23 @@ def create():
     model_version = os.environ.get("SA_MODEL_VERSION", "unconfigured")
     config_version = os.environ.get("SA_CONFIG_VERSION", "unconfigured")
     dimension = int(os.environ.get("SA_VECTOR_DIMENSION", "384"))
-    if factory_name == "server.modules.integration:create_handlers":
-        import json
-        from pathlib import Path
-        manifest = json.loads((Path(os.environ.get("SA_MODEL_ROOT", "models")) / "manifest.json").read_text("utf-8"))
-        model_version, config_version = manifest["model_version"], manifest["config_version"]
-        dimension = manifest["config"]["dimension"]
     handlers = {}
-    if factory_name:
+    module_errors = {}
+    if factory_name == "server.modules.integration:create_handlers":
+        from server.modules.integration import load_registry
+        manifest, handlers, module_errors = load_registry()
+        if manifest is not None:
+            model_version, config_version = manifest["model_version"], manifest["config_version"]
+            dimension = manifest["config"]["dimension"]
+    elif factory_name:
         module, separator, name = factory_name.partition(":")
         if not separator:
             raise ValueError("SA_MODULE_FACTORY must be package.module:function")
         handlers = getattr(importlib.import_module(module), name)()
-    return create_app(
+    app = create_app(
         token=token, model_version=model_version,
         config_version=config_version,
         dimension=dimension, handlers=handlers,
     )
+    app.state.module_errors = module_errors
+    return app

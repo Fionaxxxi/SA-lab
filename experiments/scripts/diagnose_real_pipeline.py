@@ -31,7 +31,7 @@ async def diagnose(args):
     os.environ['SA_MODEL_ROOT'] = str(args.models.resolve())
     manifest = json.loads((args.models / 'manifest.json').read_text('utf-8'))
     started = time.perf_counter()
-    handlers = create_handlers()
+    handlers = create_handlers(strict=True)
     load_ms = (time.perf_counter() - started) * 1000
     with wave.open(str(args.wav), 'rb') as wav:
         assert (wav.getframerate(), wav.getnchannels(), wav.getsampwidth()) == (16000, 1, 2)

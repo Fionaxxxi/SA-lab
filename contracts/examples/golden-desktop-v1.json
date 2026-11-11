@@ -1,0 +1,218 @@
+{
+  "sample_id": "desktop-regression-v1",
+  "schema_version": 1,
+  "condition": "SYNTHETIC_DESKTOP_REGRESSION_CANDIDATE",
+  "model_version": "modelset-e8f8c211226b-066409f3d9db-9ba59cbaae79",
+  "config_version": "rules-v1",
+  "input_sha256": "72e478a2f38b432965ca0b5bf89b4dd98256b52dd602beece4d238e3f832d667",
+  "input_sha256_encoding": "UTF-8 compact JSON with input object key order preserved",
+  "generated_at": "2026-11-11T14:11:24.460Z",
+  "generated_by": "Codex",
+  "provenance": "Expected values seeded from prior measured desktop outputs; stored before the new regression runs. Human/phone acceptance pending.",
+  "tolerance": {
+    "vector_abs": 0.00001,
+    "score_abs": 0.000001,
+    "norm_abs": 0.00001
+  },
+  "input": {
+    "texts": [
+      "先调查居民需求",
+      "面向老年居民讲解诈骗案例",
+      "活动后回访评估宣传效果"
+    ],
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "先调查居民需求"
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "面向老年居民讲解诈骗案例"
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "活动后回访评估宣传效果"
+      }
+    ]
+  },
+  "expected": {
+    "token_ids": [
+      [
+        [
+          0,
+          6,
+          2996,
+          18342,
+          29371,
+          10637,
+          2
+        ]
+      ],
+      [
+        [
+          0,
+          6,
+          75829,
+          172559,
+          29371,
+          186990,
+          206054,
+          63377,
+          2
+        ]
+      ],
+      [
+        [
+          0,
+          6,
+          7005,
+          1826,
+          2490,
+          37337,
+          62193,
+          29052,
+          15447,
+          2
+        ]
+      ]
+    ],
+    "dimension": 384,
+    "vectors_first8": [
+      [
+        0.04143702433402736,
+        0.010029573089094182,
+        -0.009940429034899194,
+        -0.018982743902553875,
+        0.023405481544868018,
+        -0.012011628446101307,
+        -0.038403703228444074,
+        0.034371847893394133
+      ],
+      [
+        -0.03029851716758317,
+        0.07407224995568312,
+        -0.07397233469096469,
+        -0.036958454196770865,
+        0.04835285456341054,
+        0.038109765564343694,
+        0.0504532979971459,
+        0.0011724758882277662
+      ],
+      [
+        0.03974536534926849,
+        0.03216301169589069,
+        -0.06456574516104453,
+        -0.08917660794688277,
+        0.051170852179492715,
+        0.03866775262285719,
+        0.028624710397494445,
+        0.0092598752221664
+      ]
+    ],
+    "norms": [
+      1.0000000000000002,
+      1,
+      1
+    ],
+    "cosine": [
+      [
+        1.0000000000000007,
+        0.36576464252950946,
+        0.3856340839094957
+      ],
+      [
+        0.36576464252950946,
+        1,
+        0.27217965549865875
+      ],
+      [
+        0.3856340839094957,
+        0.27217965549865875,
+        1
+      ]
+    ],
+    "transcript": {
+      "full_text": "首先调查居民需求\n在组织分层反诈宣传\n最后回访评估宣传效果",
+      "segments": [
+        {
+          "segment_id": "seg1",
+          "start_sample": 2080,
+          "end_sample": 35808,
+          "text": "首先调查居民需求"
+        },
+        {
+          "segment_id": "seg2",
+          "start_sample": 40992,
+          "end_sample": 77280,
+          "text": "在组织分层反诈宣传"
+        },
+        {
+          "segment_id": "seg3",
+          "start_sample": 82464,
+          "end_sample": 124384,
+          "text": "最后回访评估宣传效果"
+        }
+      ]
+    },
+    "intervals": [
+      {
+        "segment_id": "seg1",
+        "start_sample": 2080,
+        "end_sample": 35808
+      },
+      {
+        "segment_id": "seg2",
+        "start_sample": 40992,
+        "end_sample": 77280
+      },
+      {
+        "segment_id": "seg3",
+        "start_sample": 82464,
+        "end_sample": 124384
+      }
+    ],
+    "matches": [
+      {
+        "keypoint_id": "k1",
+        "score": 0.9082319430656692,
+        "covered": true,
+        "evidence_sentence_id": "s1",
+        "evidence_text": "首先调查居民需求"
+      },
+      {
+        "keypoint_id": "k2",
+        "score": 0.9930631618590755,
+        "covered": true,
+        "evidence_sentence_id": "s2",
+        "evidence_text": "在组织分层反诈宣传"
+      },
+      {
+        "keypoint_id": "k3",
+        "score": 0.813020125384491,
+        "covered": true,
+        "evidence_sentence_id": "s3",
+        "evidence_text": "最后回访评估宣传效果"
+      }
+    ]
+  },
+  "audio": {
+    "filename": "synthetic-huihui.wav",
+    "sha256": "77174a3608750fc5362185ceee1f73784fe179a4c0301bba3e98b119c332e2bd",
+    "sample_count": 135280,
+    "source": "Windows Microsoft Huihui TTS, not human recording"
+  },
+  "speech_keypoints": [
+    {
+      "keypoint_id": "k1",
+      "text": "调查居民需求"
+    },
+    {
+      "keypoint_id": "k2",
+      "text": "组织分层反诈宣传"
+    },
+    {
+      "keypoint_id": "k3",
+      "text": "回访评估宣传效果"
+    }
+  ]
+}

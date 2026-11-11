@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "condition": "EXPECTED_DESKTOP_DIAGNOSTIC_CASES_NOT_ACTUAL_RESULTS",
+  "generated_by": "Codex",
+  "generated_at": "2026-11-11T14:17:16.882Z",
+  "cases": [
+    {
+      "case_id": "empty-pcm",
+      "expected_http": 400,
+      "expected_code": "INVALID_PAYLOAD"
+    },
+    {
+      "case_id": "over-60s",
+      "expected_http": 400,
+      "expected_code": "INVALID_PAYLOAD"
+    },
+    {
+      "case_id": "bad-base64",
+      "expected_http": 400,
+      "expected_code": "INVALID_PAYLOAD"
+    },
+    {
+      "case_id": "silence-vad",
+      "expected_http": 422,
+      "expected_code": "NO_SPEECH"
+    },
+    {
+      "case_id": "silence-asr",
+      "expected_http": 422,
+      "expected_code": "NO_TRANSCRIPT"
+    },
+    {
+      "case_id": "wrong-version",
+      "expected_http": 409,
+      "expected_code": "VERSION_MISMATCH"
+    },
+    {
+      "case_id": "unknown-module",
+      "expected_http": 404,
+      "expected_code": "UNKNOWN_MODULE"
+    },
+    {
+      "case_id": "wrong-token",
+      "expected_http": 401,
+      "expected_code": "UNAUTHORIZED"
+    },
+    {
+      "case_id": "zero-vector",
+      "expected_http": 400,
+      "expected_code": "INVALID_PAYLOAD"
+    },
+    {
+      "case_id": "wrong-dimension",
+      "expected_http": 400,
+      "expected_code": "INVALID_PAYLOAD"
+    },
+    {
+      "case_id": "deadline",
+      "expected_http": 504,
+      "expected_code": "DEADLINE_EXCEEDED"
+    },
+    {
+      "case_id": "body-over-4MiB",
+      "expected_http": 413,
+      "expected_code": "PAYLOAD_TOO_LARGE"
+    },
+    {
+      "case_id": "real-factory-missing-model",
+      "expected_http": 503,
+      "expected_code": "MODEL_UNAVAILABLE"
+    }
+  ],
+  "wav_invalid": [
+    "empty",
+    "stereo",
+    "wrong-rate",
+    "24-bit",
+    "over-duration",
+    "truncated",
+    "bad-header"
+  ],
+  "repeat": {
+    "module": "M2",
+    "input": "1-second synthetic silence",
+    "expected_code": "NO_TRANSCRIPT",
+    "count": 20
+  }
+}

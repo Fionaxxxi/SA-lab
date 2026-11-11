@@ -17,7 +17,7 @@ cli.add_argument("--repeats", type=int, default=1)
 args = cli.parse_args()
 if args.repeats < 1:
     cli.error("repeats must be positive")
-handlers = create_handlers()
+handlers = create_handlers(strict=True)
 manifest = json.loads(Path("models/manifest.json").read_text("utf-8"))
 samples = json.loads(args.samples.read_text("utf-8"))
 args.output.parent.mkdir(parents=True, exist_ok=True)

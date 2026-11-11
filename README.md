@@ -14,3 +14,6 @@
 | contracts/ | v1 候选契约、固定样例和错误约定。 |
 
 阶段通过须按原 S0–S3 计划复核，特别是模型 token IDs、两机断网运行、人工标签、跨端容差和非作者签收。
+
+
+无需手机的电脑端入口：experiments/scripts/analyze_desktop.py。电脑启动/内存测量、真实服务异常用例和固定回归样例见 [电脑验证说明](docs/desktop-validation.md)。手机与人工录音验证按用户安排后续执行。

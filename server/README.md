@@ -29,6 +29,9 @@ Invoke-RestMethod -Uri http://127.0.0.1:8000/api/v1/modules/M4/execute -Method P
   -Body ([Text.Encoding]::UTF8.GetBytes(($case.request | ConvertTo-Json -Depth 30 -Compress)))
 ```
 
-真实模式移除 `SA_DEMO`，设置 `SA_MODULE_FACTORY=server.modules.integration:create_handlers`，以及与手机一致的 `SA_MODEL_VERSION`、`SA_CONFIG_VERSION` 和 `SA_VECTOR_DIMENSION`。示例 factory 名是接入点，由算法联调时提供。它返回 `dict[str, Callable[[dict], dict]]`，键限 M1–M4，每个函数接收协议的 payload 并返回 output，业务失败用 `ProtocolError(code, message)`。加载模型、阈值和规则后才登记该模块，无法加载的模块可省略，health 会显示不可用。适配器可能在不同手机请求中并发运行，持有的资源应支持此并发或由适配器串行化。
+真实模式移除 `SA_DEMO`，设置 `SA_MODULE_FACTORY=server.modules.integration:create_handlers`，以及与手机一致的 `SA_MODEL_VERSION`、`SA_CONFIG_VERSION` 和 `SA_VECTOR_DIMENSION`。该 factory 已实现，并从同一份已验证清单取得模型/配置版本和维度。它返回 `dict[str, Callable[[dict], dict]]`，键限 M1–M4，每个函数接收协议的 payload 并返回 output，业务失败用 `ProtocolError(code, message)`。加载模型、阈值和规则后才登记该模块，无法加载的模块可省略，health 会显示不可用。适配器可能在不同手机请求中并发运行，持有的资源应支持此并发或由适配器串行化。
 
 用受控局域网的指定网卡地址替换 127.0.0.1 后，手机使用同一地址、端口和临时 Bearer 凭据。网关单进程运行，固定响应只开启在明确的 demo 模式。正式采集关闭 demo，按真实样例确认四个模块可用再记录。成功、拒绝和设备失败的判定见 [HTTP v1 错误表](../contracts/errors.md)。
+
+
+电脑 WAV 分析与实测入口见 [电脑验证说明](../docs/desktop-validation.md)。真实 factory 按模块核对运行文件 SHA256：缺失、坏哈希或加载错误只使相应模块不可用；缺少整个清单时仍可探活，全部模块不可用。严格诊断脚本要求全部模块可用，会抛出 MODEL_UNAVAILABLE。生产服务不自动回退到其他权重或 demo。
