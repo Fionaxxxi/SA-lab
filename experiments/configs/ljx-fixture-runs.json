@@ -1,0 +1,242 @@
+[
+  {
+    "schema_version": 1,
+    "run_id": "demo-local",
+    "measurement_version": "measurement-v1",
+    "condition": "FIXTURE",
+    "device": {
+      "device_id": "jvm-fixture",
+      "model": "Windows JVM",
+      "android_version": null,
+      "abi": null,
+      "power_mode": null,
+      "charging": null,
+      "battery_percent": null,
+      "temperature_c": null
+    },
+    "network": {
+      "mode": "LOOPBACK",
+      "actual_bandwidth_mbps": null,
+      "actual_rtt_ms": null,
+      "profile_id": "windows-localhost"
+    },
+    "input": {
+      "source": "IMPORT",
+      "duration_s": 0.000125,
+      "keypoint_count": 1,
+      "sample_manifest_sha256": null,
+      "topic_set": "synthetic-pcm"
+    },
+    "runtime": {
+      "plan_version": "plan-LOCAL",
+      "model_version": "modelset-demo",
+      "config_version": "rules-demo",
+      "apk_commit": null,
+      "service_commit": null,
+      "model_manifest_sha256": null,
+      "apk_version": null,
+      "warmup": "WARM",
+      "cache_policy": "FIXTURE"
+    }
+  },
+  {
+    "schema_version": 1,
+    "run_id": "demo-remote",
+    "measurement_version": "measurement-v1",
+    "condition": "FIXTURE",
+    "device": {
+      "device_id": "jvm-fixture",
+      "model": "Windows JVM",
+      "android_version": null,
+      "abi": null,
+      "power_mode": null,
+      "charging": null,
+      "battery_percent": null,
+      "temperature_c": null
+    },
+    "network": {
+      "mode": "LOOPBACK",
+      "actual_bandwidth_mbps": null,
+      "actual_rtt_ms": null,
+      "profile_id": "windows-localhost"
+    },
+    "input": {
+      "source": "IMPORT",
+      "duration_s": 0.000125,
+      "keypoint_count": 1,
+      "sample_manifest_sha256": null,
+      "topic_set": "synthetic-pcm"
+    },
+    "runtime": {
+      "plan_version": "plan-REMOTE",
+      "model_version": "modelset-demo",
+      "config_version": "rules-demo",
+      "apk_commit": null,
+      "service_commit": null,
+      "model_manifest_sha256": null,
+      "apk_version": null,
+      "warmup": "WARM",
+      "cache_policy": "FIXTURE"
+    }
+  },
+  {
+    "schema_version": 1,
+    "run_id": "demo-manual_mixed",
+    "measurement_version": "measurement-v1",
+    "condition": "FIXTURE",
+    "device": {
+      "device_id": "jvm-fixture",
+      "model": "Windows JVM",
+      "android_version": null,
+      "abi": null,
+      "power_mode": null,
+      "charging": null,
+      "battery_percent": null,
+      "temperature_c": null
+    },
+    "network": {
+      "mode": "LOOPBACK",
+      "actual_bandwidth_mbps": null,
+      "actual_rtt_ms": null,
+      "profile_id": "windows-localhost"
+    },
+    "input": {
+      "source": "IMPORT",
+      "duration_s": 0.000125,
+      "keypoint_count": 1,
+      "sample_manifest_sha256": null,
+      "topic_set": "synthetic-pcm"
+    },
+    "runtime": {
+      "plan_version": "plan-MANUAL_MIXED",
+      "model_version": "modelset-demo",
+      "config_version": "rules-demo",
+      "apk_commit": null,
+      "service_commit": null,
+      "model_manifest_sha256": null,
+      "apk_version": null,
+      "warmup": "WARM",
+      "cache_policy": "FIXTURE"
+    }
+  },
+  {
+    "schema_version": 1,
+    "run_id": "demo-fault-recording",
+    "measurement_version": "measurement-v1",
+    "condition": "FIXTURE",
+    "device": {
+      "device_id": "jvm-fixture",
+      "model": "Windows JVM",
+      "android_version": null,
+      "abi": null,
+      "power_mode": null,
+      "charging": null,
+      "battery_percent": null,
+      "temperature_c": null
+    },
+    "network": {
+      "mode": "LOOPBACK",
+      "actual_bandwidth_mbps": null,
+      "actual_rtt_ms": null,
+      "profile_id": "windows-localhost"
+    },
+    "input": {
+      "source": "RECORDING",
+      "duration_s": 0.000125,
+      "keypoint_count": 1,
+      "sample_manifest_sha256": null,
+      "topic_set": "fault-injection"
+    },
+    "runtime": {
+      "plan_version": "plan-LOCAL",
+      "model_version": "modelset-demo",
+      "config_version": "rules-demo",
+      "apk_commit": null,
+      "service_commit": null,
+      "model_manifest_sha256": null,
+      "apk_version": null,
+      "warmup": "WARM",
+      "cache_policy": "FIXTURE"
+    }
+  },
+  {
+    "schema_version": 1,
+    "run_id": "demo-fault-import",
+    "measurement_version": "measurement-v1",
+    "condition": "FIXTURE",
+    "device": {
+      "device_id": "jvm-fixture",
+      "model": "Windows JVM",
+      "android_version": null,
+      "abi": null,
+      "power_mode": null,
+      "charging": null,
+      "battery_percent": null,
+      "temperature_c": null
+    },
+    "network": {
+      "mode": "LOOPBACK",
+      "actual_bandwidth_mbps": null,
+      "actual_rtt_ms": null,
+      "profile_id": "windows-localhost"
+    },
+    "input": {
+      "source": "IMPORT",
+      "duration_s": 0.000125,
+      "keypoint_count": 1,
+      "sample_manifest_sha256": null,
+      "topic_set": "fault-injection"
+    },
+    "runtime": {
+      "plan_version": "plan-LOCAL",
+      "model_version": "modelset-demo",
+      "config_version": "rules-demo",
+      "apk_commit": null,
+      "service_commit": null,
+      "model_manifest_sha256": null,
+      "apk_version": null,
+      "warmup": "WARM",
+      "cache_policy": "FIXTURE"
+    }
+  },
+  {
+    "schema_version": 1,
+    "run_id": "accounting-fixture-v1",
+    "measurement_version": "measurement-v1",
+    "condition": "FIXTURE",
+    "device": {
+      "device_id": "fixture-device",
+      "model": "Windows JVM",
+      "android_version": null,
+      "abi": null,
+      "power_mode": null,
+      "charging": null,
+      "battery_percent": null,
+      "temperature_c": null
+    },
+    "network": {
+      "mode": "LOOPBACK",
+      "actual_bandwidth_mbps": null,
+      "actual_rtt_ms": null,
+      "profile_id": "windows-localhost"
+    },
+    "input": {
+      "source": "IMPORT",
+      "duration_s": 10,
+      "keypoint_count": 1,
+      "sample_manifest_sha256": null,
+      "topic_set": "synthetic-accounting"
+    },
+    "runtime": {
+      "plan_version": "plan-LOCAL",
+      "model_version": "modelset-demo",
+      "config_version": "rules-demo",
+      "apk_commit": null,
+      "service_commit": null,
+      "model_manifest_sha256": null,
+      "apk_version": null,
+      "warmup": "WARM",
+      "cache_policy": "FIXTURE"
+    }
+  }
+]

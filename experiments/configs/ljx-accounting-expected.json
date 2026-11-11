@@ -1,0 +1,11 @@
+{
+  "condition": "FIXTURE",
+  "run_id": "accounting-fixture-v1",
+  "effective_tasks": 4,
+  "successful_tasks": 2,
+  "completion_rate": 0.5,
+  "feedback_latency_sample_count": 2,
+  "p50_ms": 2100,
+  "p90_ms": 2340,
+  "p99_ms": 2394
+}

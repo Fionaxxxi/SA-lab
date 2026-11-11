@@ -1,0 +1,367 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Experiment run configuration v1",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "measurement_version": {
+      "const": "measurement-v1"
+    },
+    "condition": {
+      "enum": [
+        "FORMAL",
+        "FIXTURE"
+      ]
+    },
+    "device": {
+      "type": "object",
+      "properties": {
+        "device_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1
+        },
+        "android_version": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "abi": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "power_mode": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "charging": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "battery_percent": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "temperature_c": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "device_id",
+        "model",
+        "android_version",
+        "abi",
+        "power_mode",
+        "charging",
+        "battery_percent",
+        "temperature_c"
+      ],
+      "additionalProperties": false
+    },
+    "network": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "enum": [
+            "OFFLINE",
+            "WIFI",
+            "SHAPED",
+            "LOOPBACK"
+          ]
+        },
+        "actual_bandwidth_mbps": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "actual_rtt_ms": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "profile_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "mode",
+        "actual_bandwidth_mbps",
+        "actual_rtt_ms",
+        "profile_id"
+      ],
+      "additionalProperties": false
+    },
+    "input": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "enum": [
+            "RECORDING",
+            "IMPORT"
+          ]
+        },
+        "duration_s": {
+          "type": "number",
+          "minimum": 0
+        },
+        "keypoint_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sample_manifest_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "topic_set": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "source",
+        "duration_s",
+        "keypoint_count",
+        "sample_manifest_sha256",
+        "topic_set"
+      ],
+      "additionalProperties": false
+    },
+    "runtime": {
+      "type": "object",
+      "properties": {
+        "plan_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "model_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "config_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "apk_commit": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{7,64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "service_commit": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{7,64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "model_manifest_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "apk_version": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "warmup": {
+          "enum": [
+            "COLD",
+            "WARM"
+          ]
+        },
+        "cache_policy": {
+          "enum": [
+            "DISABLED",
+            "FIXED",
+            "FIXTURE"
+          ]
+        }
+      },
+      "required": [
+        "plan_version",
+        "model_version",
+        "config_version",
+        "apk_commit",
+        "service_commit",
+        "model_manifest_sha256",
+        "apk_version",
+        "warmup",
+        "cache_policy"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema_version",
+    "run_id",
+    "measurement_version",
+    "condition",
+    "device",
+    "network",
+    "input",
+    "runtime"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "condition": {
+            "const": "FORMAL"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "input": {
+            "properties": {
+              "sample_manifest_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          },
+          "runtime": {
+            "properties": {
+              "apk_commit": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{7,64}$"
+              },
+              "apk_version": {
+                "type": "string",
+                "minLength": 1
+              },
+              "model_manifest_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "cache_policy": {
+                "enum": [
+                  "DISABLED",
+                  "FIXED"
+                ]
+              }
+            }
+          },
+          "network": {
+            "properties": {
+              "mode": {
+                "enum": [
+                  "OFFLINE",
+                  "WIFI",
+                  "SHAPED"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

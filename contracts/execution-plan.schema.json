@@ -14,6 +14,7 @@
       "enum": [
         "LOCAL",
         "REMOTE",
+        "MANUAL_MIXED",
         "MIN_CUT",
         "DYNAMIC"
       ]
@@ -152,6 +153,87 @@
                 "const": "REMOTE"
               }
             }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "mode": {
+            "const": "MANUAL_MIXED"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "assignments": {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "properties": {
+                      "M1": {
+                        "const": "LOCAL"
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "M2": {
+                        "const": "LOCAL"
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "M3": {
+                        "const": "LOCAL"
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "M4": {
+                        "const": "LOCAL"
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "properties": {
+                      "M1": {
+                        "const": "REMOTE"
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "M2": {
+                        "const": "REMOTE"
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "M3": {
+                        "const": "REMOTE"
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "M4": {
+                        "const": "REMOTE"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
           }
         }
       }

@@ -7,7 +7,7 @@
   "generated_at": "2026-11-09",
   "generated_by": "Codex",
   "tolerance": {
-    "score_abs": 0.00001,
+    "score_abs": 1e-05,
     "elapsed_ms": "runtime-dependent"
   },
   "cases": [
@@ -115,7 +115,7 @@
       }
     },
     {
-      "id": "S0-T3-old-schema",
+      "id": "S3-T3-old-schema",
       "request": {
         "schema_version": 0,
         "task_id": "fixture-m4-001",
@@ -156,7 +156,7 @@
       }
     },
     {
-      "id": "S0-T3-expired",
+      "id": "S3-T3-expired",
       "request": {
         "schema_version": 1,
         "task_id": "fixture-expired",
@@ -195,7 +195,102 @@
         "http_status": 504,
         "code": "DEADLINE_EXCEEDED"
       }
+    },
+    {
+      "id": "S3-T3-duplicate",
+      "after": "S0-T3-success",
+      "request": {
+        "schema_version": 1,
+        "task_id": "fixture-m4-001",
+        "attempt": 1,
+        "module_id": "M4",
+        "plan_version": "p-remote",
+        "model_version": "modelset-demo",
+        "config_version": "rules-demo",
+        "remaining_budget_ms": 2000,
+        "payload": {
+          "embeddings": {
+            "dimension": 2,
+            "answer_sentences": [
+              {
+                "sentence_id": "s1",
+                "text": "先调查居民需求",
+                "vector": [
+                  1,
+                  0
+                ]
+              }
+            ],
+            "keypoints": [
+              {
+                "keypoint_id": "k1",
+                "vector": [
+                  1,
+                  0
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "expected": {
+        "http_status": 200,
+        "cached": true
+      }
+    },
+    {
+      "id": "S3-T3-conflict",
+      "after": "S0-T3-success",
+      "request": {
+        "schema_version": 1,
+        "task_id": "fixture-m4-001",
+        "attempt": 1,
+        "module_id": "M4",
+        "plan_version": "p-remote",
+        "model_version": "modelset-demo",
+        "config_version": "rules-demo",
+        "remaining_budget_ms": 1999,
+        "payload": {
+          "embeddings": {
+            "dimension": 2,
+            "answer_sentences": [
+              {
+                "sentence_id": "s1",
+                "text": "先调查居民需求",
+                "vector": [
+                  1,
+                  0
+                ]
+              }
+            ],
+            "keypoints": [
+              {
+                "keypoint_id": "k1",
+                "vector": [
+                  1,
+                  0
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "expected": {
+        "http_status": 409,
+        "code": "REQUEST_CONFLICT"
+      }
+    },
+    {
+      "id": "S3-T3-oversize",
+      "body_recipe": {
+        "fill": "x",
+        "utf8_bytes": 4194305
+      },
+      "expected": {
+        "http_status": 413,
+        "code": "PAYLOAD_TOO_LARGE"
+      }
     }
   ],
-  "expected": "各用例均为 S0 协议测试，expected 中的结果为预登记期望。"
+  "expected": "See cases[].expected."
 }

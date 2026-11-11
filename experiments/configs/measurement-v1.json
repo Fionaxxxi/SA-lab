@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "measurement_version": "measurement-v1",
+  "input": {
+    "language": "zh-CN",
+    "audio_duration_s": 10,
+    "reference_keypoints_min": 3,
+    "reference_keypoints_max": 5,
+    "in_flight_per_device": 1,
+    "warmup": "WARM"
+  },
+  "targets": {
+    "p90_ms_max": 5000,
+    "p90_minus_p50_ms_max": 2000,
+    "rtf_max": 0.5,
+    "throughput_tasks_per_min_min": 6,
+    "effective_completion_rate_min": 0.99,
+    "cer_max": 0.2,
+    "cross_device_similarity_abs_delta_max": 0.01
+  },
+  "collection": {
+    "major_configuration_attempts_min": 100,
+    "independent_labeled_recordings_min": 30,
+    "extension_audio_duration_s": [
+      10,
+      30,
+      60
+    ],
+    "device_slots": [
+      "phone-a",
+      "phone-b"
+    ],
+    "baseline_plan_mode": "LOCAL"
+  },
+  "event_names": [
+    "TASK_SUBMITTED",
+    "MODULE_END",
+    "TASK_TERMINAL",
+    "FEEDBACK_VISIBLE"
+  ],
+  "time_unit": "ms",
+  "clock": "process monotonic",
+  "traffic_unit": "UTF-8 HTTP JSON body bytes",
+  "percentile_method": "linear interpolation at index (n-1)*p",
+  "task_identity": [
+    "run_id",
+    "device_id",
+    "task_id"
+  ],
+  "module_event_identity": [
+    "run_id",
+    "device_id",
+    "task_id",
+    "attempt",
+    "module_id"
+  ],
+  "dataset_filters": {
+    "effective_input": true,
+    "group_by": [
+      "run_id",
+      "device_id",
+      "input_source",
+      "mode"
+    ],
+    "latency_requires": [
+      "SUCCEEDED",
+      "FEEDBACK_VISIBLE"
+    ]
+  }
+}

@@ -1,0 +1,53 @@
+[
+  {
+    "schema_version": 1,
+    "plan_version": "p-local",
+    "device_id": "jvm-fixture",
+    "mode": "LOCAL",
+    "model_version": "modelset-demo",
+    "config_version": "rules-demo",
+    "cost_table_version": null,
+    "assignments": {
+      "M0": "LOCAL",
+      "M1": "LOCAL",
+      "M2": "LOCAL",
+      "M3": "LOCAL",
+      "M4": "LOCAL",
+      "M5": "LOCAL"
+    }
+  },
+  {
+    "schema_version": 1,
+    "plan_version": "p-remote",
+    "device_id": "jvm-fixture",
+    "mode": "REMOTE",
+    "model_version": "modelset-demo",
+    "config_version": "rules-demo",
+    "cost_table_version": null,
+    "assignments": {
+      "M0": "LOCAL",
+      "M1": "REMOTE",
+      "M2": "REMOTE",
+      "M3": "REMOTE",
+      "M4": "REMOTE",
+      "M5": "LOCAL"
+    }
+  },
+  {
+    "schema_version": 1,
+    "plan_version": "p-manual_mixed",
+    "device_id": "jvm-fixture",
+    "mode": "MANUAL_MIXED",
+    "model_version": "modelset-demo",
+    "config_version": "rules-demo",
+    "cost_table_version": null,
+    "assignments": {
+      "M0": "LOCAL",
+      "M1": "LOCAL",
+      "M2": "REMOTE",
+      "M3": "REMOTE",
+      "M4": "LOCAL",
+      "M5": "LOCAL"
+    }
+  }
+]

@@ -1,10 +1,12 @@
-# S0 接口草案
+# 模块契约
 
-林俊希提交请求、结果和执行计划 Schema，供三人共同评审。M1–M4 的字段按详细实施计划建模。录音、分段、转写、编码与匹配的真实样例和模型配置由相应负责人提供，签收情况见 [S0 契约评审记录](../docs/contract-review-s0.md)。
+`module-request.schema.json`、`module-result.schema.json` 和 `execution-plan.schema.json` 是 HTTP v1 候选契约。用 `python -m unittest discover -s server/tests -v` 复跑示例。网关额外验证 PCM 字节、区间、模型/配置版本、向量长度与归一化等跨字段约束。
 
-- 请求使用 UTF-8 JSON。音频为 16 kHz、单声道、s16le 原始 PCM，WAV 头由采集方去除。时间坐标为原始采样点，区间左闭右开。
-- M0 和 M5 固定在手机。请求和响应关联任务、attempt、模块及计划、模型、配置版本。
-- 联调用固定响应仅有一份二维 M4 合成载荷，期望已经登记。它用于检查请求和响应字段，输出由样例读取。
-- S0 先复核段文本拼接、模型维度、采样边界和失败口径。段文本拟采用 LF 分隔，真实配置由三人评审后确认。
+- `GET /healthz` 显示服务/协议版本、demo 标记、模型/配置版本与模块可用性。
+- `POST /api/v1/modules/{M1..M4}/execute` 使用 UTF-8 JSON 和 Bearer token。请求体上限 4 MiB，PCM 最长 60 秒。每次仅执行一个模块。
+- 成功回显 schema、任务、attempt、模块、计划、模型及配置身份，另有 `status/executor/elapsed_ms/output`。客户端验证全身份再采纳。
+- `full_text` 将非空段文本去首尾空白后以 LF（`\n`）连接，段列表保留空段和原始采样坐标。
+- `plan_version` 由客户端确定。候选协议的 `MANUAL_MIXED` 明确表示 M1–M4 同时包含 LOCAL、REMOTE；M0/M5 固定 LOCAL。成本版本在 S3 手动计划中为 null。
+- 二维固定响应只用于协议验证。正式接入按模型清单确定维度、分词、池化和匹配阈值。
 
-参见 [错误码草案](errors.md) 和 [网关启动说明](../server/README.md)。
+固定用例在 `examples/ljx-http-cases.json`，其中输入哈希取成功请求的排序键 UTF-8 紧凑 JSON。执行计划样例在 `examples/ljx-execution-plans.json`。错误与缓存说明见 [errors.md](errors.md)，评审状态见 [S0 契约评审记录](../docs/contract-review-s0.md)。
