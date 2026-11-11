@@ -1,0 +1,23 @@
+[
+  {
+    "sample_id": "TODO-S01",
+    "topic_id": "TODO-topic",
+    "speaker_id": "",
+    "split": "calibration",
+    "wav_path": "local/S01.wav",
+    "sha256": "",
+    "effective_input": null,
+    "reference_text": "",
+    "annotator": "",
+    "reviewer": "",
+    "consent": false,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      }
+    ]
+  }
+]

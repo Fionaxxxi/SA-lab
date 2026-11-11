@@ -4,6 +4,7 @@ import hashlib
 import json
 import threading
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 import httpx
@@ -131,33 +132,37 @@ class GatewayTests(unittest.IsolatedAsyncioTestCase):
     async def test_timeout_and_cache_expiry(self):
         started, release = threading.Event(), threading.Event()
         calls = 0
+        clock = [100.0]
 
         def block(payload):
             nonlocal calls
             calls += 1
             started.set()
-            release.wait(3)
+            release.wait(15)
             return demo_handlers()["M4"](payload)
 
-        request = REQUEST | {"remaining_budget_ms": 150}
-        async with client(gateway(handlers={"M4": block}, cache_ttl=0.1)) as http:
-            first = asyncio.create_task(http.post(URL, headers=HEADERS, json=request))
-            try:
-                self.assertTrue(await asyncio.to_thread(started.wait, 1))
-                self.assertEqual((await first).status_code, 504)
-                self.assertEqual((await http.post(URL, headers=HEADERS, json=request)).status_code, 409)
-            finally:
-                release.set()
-            for _ in range(40):
-                retry = await http.post(URL, headers=HEADERS, json=request)
-                if retry.status_code != 409:
-                    break
-                await asyncio.sleep(0.01)
-            self.assertEqual(retry.status_code, 504)
-            self.assertEqual(calls, 1)
-            await asyncio.sleep(0.11)
-            self.assertEqual((await http.post(URL, headers=HEADERS, json=request)).status_code, 200)
-            self.assertEqual(calls, 2)
+        # Thread startup is not the behavior under test. Use a generous execution
+        # budget, hold the handler explicitly, and advance cache time ourselves.
+        request = REQUEST | {"remaining_budget_ms": 2000}
+        with patch("server.gateway.service.monotonic", side_effect=lambda: clock[0]):
+            async with client(gateway(handlers={"M4": block}, cache_ttl=0.1)) as http:
+                first = asyncio.create_task(http.post(URL, headers=HEADERS, json=request))
+                try:
+                    self.assertTrue(await asyncio.to_thread(started.wait, 5))
+                    self.assertEqual((await first).status_code, 504)
+                    self.assertEqual((await http.post(URL, headers=HEADERS, json=request)).status_code, 409)
+                finally:
+                    release.set()
+                for _ in range(100):
+                    retry = await http.post(URL, headers=HEADERS, json=request)
+                    if retry.status_code != 409:
+                        break
+                    await asyncio.sleep(0.02)
+                self.assertEqual(retry.status_code, 504)
+                self.assertEqual(calls, 1)
+                clock[0] += 1
+                self.assertEqual((await http.post(URL, headers=HEADERS, json=request)).status_code, 200)
+                self.assertEqual(calls, 2)
 
 
 if __name__ == "__main__":

@@ -5,3 +5,6 @@
 模型配置采用 384 维、128 token、mean pooling 和 L2 归一化。长句每 126 个内容 token 加特殊 token 编码，再按内容 token 数加权汇总和归一化。Android 通过 SentencePiece 0.2.0 JNI 与 Python SentencePiece 0.2.0 对齐，XLM-R 的未知 token 映射为 3，其他 SentencePiece token 加 1，BOS=0、EOS=2。首次真模型运行须对齐 token IDs、张量和数值，才可形成金样例。
 
 匹配阈值 0.8 是待校准配置，须用按题目划分的校准集确定并版本化，评价集用于独立报告质量。模型权重及生成的包不纳入 Git。
+
+
+固定源码版本：MiniLM e8f8c211226b894fcb81acc59f3b34ba3efd5f42，Silero 066409f3d9db45a30d21dfcbf9147826ffdd7052。脚本还校验当前固定的 ONNX SHA256。自定义 Vosk 镜像使用 --vosk-archive、--vosk-source、--vosk-sha256 显式登记；解压后将单一根目录规范为 weights/vosk-model-cn-0.22，并为全部文件分别计算哈希。正式模型包只收录 manifest 和运行文件，排除源归档及分块。

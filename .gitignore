@@ -39,3 +39,6 @@ __pycache__/
 *.wav
 *.pcm
 *.zip
+
+# Native build intermediates
+.cxx/

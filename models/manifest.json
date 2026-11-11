@@ -1,0 +1,153 @@
+{
+  "model_version": "modelset-e8f8c211226b-066409f3d9db-9ba59cbaae79",
+  "config_version": "rules-v1",
+  "source_archives": [
+    {
+      "path": "weights/vosk-model-cn-0.22.zip",
+      "url": "https://hf-mirror.com/LiangJingyi/vosk-model-cn-0.22/resolve/8949a406ac74d453ecae72ca9cfe09095cd3416c/model-cn.zip?download=true",
+      "sha256": "9ba59cbaae7921102574b271d9928101eeecbf714a88e57bcff5393b8c4d49c1",
+      "license": "Apache-2.0"
+    }
+  ],
+  "artifacts": {
+    "semantic": {
+      "path": "weights/semantic.onnx",
+      "url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2/resolve/e8f8c211226b894fcb81acc59f3b34ba3efd5f42/onnx/model.onnx",
+      "sha256": "10f7a088420252b26caf819236ca2c9d2987afd0fc06fec7553b542a5655a05a",
+      "license": "Apache-2.0"
+    },
+    "tokenizer": {
+      "path": "weights/sentencepiece.bpe.model",
+      "url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2/resolve/e8f8c211226b894fcb81acc59f3b34ba3efd5f42/sentencepiece.bpe.model",
+      "sha256": "cfc8146abe2a0488e9e2a0c56de7952f7c11ab059eca145a0a727afce0db2865",
+      "license": "Apache-2.0"
+    },
+    "vad": {
+      "path": "weights/silero_vad.onnx",
+      "url": "https://raw.githubusercontent.com/snakers4/silero-vad/066409f3d9db45a30d21dfcbf9147826ffdd7052/src/silero_vad/data/silero_vad.onnx",
+      "sha256": "1a153a22f4509e292a94e67d6f9b85e8deb25b4988682b7e174c65279d8788e3",
+      "license": "MIT"
+    },
+    "vosk_file_001": {
+      "path": "weights/vosk-model-cn-0.22/am/final.mdl",
+      "sha256": "f2c6547dbb58ab6ae3e3b53a991aedb582ae1c3b92c8d2d9a29f01147b729700",
+      "license": "Apache-2.0"
+    },
+    "vosk_file_003": {
+      "path": "weights/vosk-model-cn-0.22/conf/mfcc.conf",
+      "sha256": "463aa0c186e327380ad8e40f0fcb76e47cceddafc57f6d635bbce5589b43e23b",
+      "license": "Apache-2.0"
+    },
+    "vosk_file_004": {
+      "path": "weights/vosk-model-cn-0.22/conf/model.conf",
+      "sha256": "5be64db91cc7895d29a61dafc88e61d7de9c2ffba9d2f7bffc0f16df02ece6aa",
+      "license": "Apache-2.0"
+    },
+    "vosk_file_006": {
+      "path": "weights/vosk-model-cn-0.22/graph/HCLG.fst",
+      "sha256": "e52fad685b5d573775991d6c0b79ee75061f3b57884d37364ab7db62b903e687",
+      "license": "Apache-2.0"
+    },
+    "vosk_file_008": {
+      "path": "weights/vosk-model-cn-0.22/graph/phones/word_boundary.int",
+      "sha256": "11ca784b99f03188b451fb54714c2de3dd694e662a5f88e82df435c2789b9aec",
+      "license": "Apache-2.0"
+    },
+    "vosk_file_009": {
+      "path": "weights/vosk-model-cn-0.22/graph/words.txt",
+      "sha256": "e94e305b8f03c709e0f399b405ca4991b4147c39726b0de423ac1a4be322f21c",
+      "license": "Apache-2.0"
+    },
+    "vosk_file_011": {
+      "path": "weights/vosk-model-cn-0.22/ivector/final.dubm",
+      "sha256": "e33276cbd548c0a03ae5812c98115940614997dff23a6d59968af6eaf7630ff8",
+      "license": "Apache-2.0"
+    },
+    "vosk_file_012": {
+      "path": "weights/vosk-model-cn-0.22/ivector/final.ie",
+      "sha256": "c39d46fbff04efb7baa9660ae7a728b0e2f35a4a1250b56ed3a599e26956df86",
+      "license": "Apache-2.0"
+    },
+    "vosk_file_013": {
+      "path": "weights/vosk-model-cn-0.22/ivector/final.mat",
+      "sha256": "42706d88818070ea0d0182b4d11367ba52a13b9a2be45630f60858a422109ada",
+      "license": "Apache-2.0"
+    },
+    "vosk_file_014": {
+      "path": "weights/vosk-model-cn-0.22/ivector/global_cmvn.stats",
+      "sha256": "b267dc89c1556fdd5bc358f0a480929da1743eeccfa06a67daf8db629ca336bb",
+      "license": "Apache-2.0"
+    },
+    "vosk_file_015": {
+      "path": "weights/vosk-model-cn-0.22/ivector/online_cmvn.conf",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "license": "Apache-2.0"
+    },
+    "vosk_file_016": {
+      "path": "weights/vosk-model-cn-0.22/ivector/splice.conf",
+      "sha256": "9f0c5f7c82d18eaf25d8bce470efa9f7741f88411fe428774bc0a9bb69a24756",
+      "license": "Apache-2.0"
+    },
+    "vosk_file_017": {
+      "path": "weights/vosk-model-cn-0.22/README",
+      "sha256": "957448305e4440ab5440cb63d8e030e30d562361d27a8f7019daea5f2480d63d",
+      "license": "Apache-2.0"
+    },
+    "vosk_file_019": {
+      "path": "weights/vosk-model-cn-0.22/rescore/G.carpa",
+      "sha256": "73a3ff6ddfd543188e8abd39066f4f380a930907cfc918cf3a8708f68044fdcd",
+      "license": "Apache-2.0"
+    },
+    "vosk_file_020": {
+      "path": "weights/vosk-model-cn-0.22/rescore/G.fst",
+      "sha256": "5610d9d3e10274bcede0e434f708efad66b94e53dd0d301a5d622a4675596c98",
+      "license": "Apache-2.0"
+    },
+    "vosk_file_022": {
+      "path": "weights/vosk-model-cn-0.22/rnnlm/feat_embedding.final.mat",
+      "sha256": "c91d877df31a4983f54ddd3a5b5fa206a0bfbf176be4b9755179d32ea6bcbd7f",
+      "license": "Apache-2.0"
+    },
+    "vosk_file_023": {
+      "path": "weights/vosk-model-cn-0.22/rnnlm/features.txt",
+      "sha256": "5cf1a9f5660c71aa2dd9e09524d6fcf5b409165c1b06c3d8df7b2a71eee311a1",
+      "license": "Apache-2.0"
+    },
+    "vosk_file_024": {
+      "path": "weights/vosk-model-cn-0.22/rnnlm/final.raw",
+      "sha256": "a006734e532b580d6eb960b58dd7e2c058f68a9bbae3755d5f354a2ec78b9b71",
+      "license": "Apache-2.0"
+    },
+    "vosk_file_025": {
+      "path": "weights/vosk-model-cn-0.22/rnnlm/oov.txt",
+      "sha256": "f577fde80148652a470eb4a0e87c9c2ae907ae3039051017832419ae463bd9be",
+      "license": "Apache-2.0"
+    },
+    "vosk_file_026": {
+      "path": "weights/vosk-model-cn-0.22/rnnlm/special_symbol_opts.conf",
+      "sha256": "d02b460ced98e40a492ee87453455c757f8328651562e984a92d7577f1ef933b",
+      "license": "Apache-2.0"
+    },
+    "vosk_file_027": {
+      "path": "weights/vosk-model-cn-0.22/rnnlm/special_symbol_opts.txt",
+      "sha256": "242273e7e7f10f6b409ace93c11b5097fcfadaa1e034ea1aeaa6a3b169f0b73c",
+      "license": "Apache-2.0"
+    },
+    "vosk_file_028": {
+      "path": "weights/vosk-model-cn-0.22/rnnlm/word_feats.txt",
+      "sha256": "c62ce7030d0e9756f58d4a8bbe6d78da5f324d3fcd705db7d2a874c22581bc57",
+      "license": "Apache-2.0"
+    }
+  },
+  "vosk_directory": "weights/vosk-model-cn-0.22",
+  "config": {
+    "dimension": 384,
+    "max_length": 128,
+    "pooling": "mean",
+    "normalize": "L2",
+    "match_threshold": 0.8,
+    "vad_threshold": 0.5,
+    "tokenizer": "XLM-R SentencePiece offset=1",
+    "long_text": "126-token chunks weighted by content-token count"
+  }
+}

@@ -19,8 +19,14 @@ class InterviewAudioRecorder {
         require(minimum > 0)
         val capture = AudioRecord(MediaRecorder.AudioSource.MIC, 16000, AudioFormat.CHANNEL_IN_MONO,
             AudioFormat.ENCODING_PCM_16BIT, maxOf(8192, minimum))
-        check(capture.state == AudioRecord.STATE_INITIALIZED)
-        capture.startRecording()
+        try {
+            check(capture.state == AudioRecord.STATE_INITIALIZED)
+            capture.startRecording()
+            check(capture.recordingState == AudioRecord.RECORDSTATE_RECORDING)
+        } catch (error: Throwable) {
+            capture.release()
+            throw error
+        }
         recorder = capture
         running = true
         failure = null

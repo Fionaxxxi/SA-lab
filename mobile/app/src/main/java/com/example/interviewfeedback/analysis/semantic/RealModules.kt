@@ -22,15 +22,25 @@ class RealModules(private val directory: File) : LocalModules, AutoCloseable {
     private val dimension = config.getInt("dimension")
     private val maxLength = config.getInt("max_length")
     private fun artifact(key: String) = File(directory, artifacts.getJSONObject(key).getString("path"))
-    private val vadSession: OrtSession
-    private val semanticSession: OrtSession
-    private val tokenizer: SentencePiece
-    private val asrModel: Model
+    private val vadResource = lazy { session("vad") }
+    private val semanticResource = lazy { session("semantic") }
+    private val tokenizerResource = lazy { SentencePiece(artifact("tokenizer").path) }
+    private val asrResource = lazy { Model(File(directory, manifest.getString("vosk_directory")).path) }
+    private val vadSession get() = vadResource.value
+    private val semanticSession get() = semanticResource.value
+    private val tokenizer get() = tokenizerResource.value
+    private val asrModel get() = asrResource.value
 
-    init {
+    private fun session(key: String): OrtSession = OrtSession.SessionOptions().use {
+        environment.createSession(artifact(key).path, it).also { sessions.add(it) }
+    }
+
+    companion object {
+        fun verifyArtifacts(directory: File, manifest: JSONObject) {
+        val artifacts = manifest.getJSONObject("artifacts")
         for (key in artifacts.keys()) {
             val descriptor = artifacts.getJSONObject(key)
-            val file = artifact(key).canonicalFile
+            val file = File(directory, descriptor.getString("path")).canonicalFile
             require(file.toPath().startsWith(directory.canonicalFile.toPath()))
             val hash = java.security.MessageDigest.getInstance("SHA-256")
             file.inputStream().use { input ->
@@ -39,15 +49,11 @@ class RealModules(private val directory: File) : LocalModules, AutoCloseable {
             }
             require(hash.digest().joinToString("") { "%02x".format(it.toInt() and 255) } == descriptor.getString("sha256"))
         }
-        try {
-            vadSession = environment.createSession(artifact("vad").path, OrtSession.SessionOptions()).also { sessions.add(it) }
-            semanticSession = environment.createSession(artifact("semantic").path, OrtSession.SessionOptions()).also { sessions.add(it) }
-            tokenizer = SentencePiece(artifact("tokenizer").path)
-            asrModel = Model(File(directory, manifest.getString("vosk_directory")).path)
-        } catch (error: Exception) {
-            sessions.forEach { it.close() }
-            throw error
         }
+    }
+
+    init {
+        verifyArtifacts(directory, manifest)
     }
 
     override fun vad(audio: Audio, id: CallId): Segments {
@@ -124,8 +130,7 @@ class RealModules(private val directory: File) : LocalModules, AutoCloseable {
         val pieces = tokenizer.encode(text).map { if (it == 0) 3 else it + 1 }
         val blocks = if (pieces.isEmpty()) listOf(emptyList()) else pieces.chunked(maxLength - 2)
         val sum = DoubleArray(dimension)
-        var totalWeight = 0
-        for (block in blocks) {
+                for (block in blocks) {
             val ids = (listOf(0) + block + listOf(2)).map { it.toLong() }.toLongArray()
             val inputs = mutableMapOf<String, OnnxTensor>()
             try {
@@ -148,7 +153,6 @@ class RealModules(private val directory: File) : LocalModules, AutoCloseable {
                         for (row in 0 until tokenCount) pooled += values.get(row * dimension + column)
                         sum[column] += pooled / tokenCount * weight
                     }
-                    totalWeight += weight
                 }
             } finally { inputs.values.forEach { it.close() } }
         }
@@ -181,5 +185,9 @@ class RealModules(private val directory: File) : LocalModules, AutoCloseable {
         })
     }
 
-    override fun close() { asrModel.close(); tokenizer.close(); sessions.forEach { it.close() } }
+    override fun close() {
+        if (asrResource.isInitialized()) asrResource.value.close()
+        if (tokenizerResource.isInitialized()) tokenizerResource.value.close()
+        sessions.forEach { it.close() }
+    }
 }
