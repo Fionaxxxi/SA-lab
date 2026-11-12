@@ -47,6 +47,7 @@ class MainActivity : Activity() {
     private var recording = false
     private lateinit var lastAudio: LastAudioStore
     private lateinit var statusBanner: TextView
+    private lateinit var screen: MobileScreen
 
     override fun onCreate(state: Bundle?) {
         super.onCreate(state)
@@ -56,24 +57,14 @@ class MainActivity : Activity() {
         deviceId = preferences.getString("device_id", null) ?: ("android-" + UUID.randomUUID()).also {
             preferences.edit().putString("device_id", it).apply()
         }
-        val page = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(24, 20, 24, 20) }
-        fun button(label: String, action: () -> Unit) {
-            page.addView(Button(this).apply { text = label; setOnClickListener { action() } })
-        }
-        page.addView(TextView(this).apply { text = "语音回答分析" })
-        statusBanner = TextView(this).apply { text = "正在初始化"; setPadding(8, 12, 8, 12); setBackgroundColor(0xFFE7F4F2.toInt()) }
-        page.addView(statusBanner)
-        points = EditText(this).apply { setText("调查居民需求\n组织分层宣传\n评估宣传效果"); hint = "每行一个参考要点" }
-        page.addView(points)
-        mode = Spinner(this).apply { adapter = ArrayAdapter(this@MainActivity,
-            android.R.layout.simple_spinner_dropdown_item, PlanMode.values().map { it.name }) }
-        page.addView(mode)
-        server = EditText(this).apply { hint = "电脑服务地址"; setText("http://192.168.1.2:8000") }
-        token = EditText(this).apply { hint = "实验访问凭据"; inputType = 129 }
-        page.addView(server); page.addView(token)
-        experimentDisplay = TextView(this)
-        page.addView(experimentDisplay)
-        samplePicker = Spinner(this).apply {
+        val actions = mutableMapOf<String, () -> Unit>()
+        screen = MobileScreen(this) { key -> actions[key]?.invoke() }
+        display = screen.display; timingDisplay = screen.timings
+        statusBanner = screen.status; points = screen.points; mode = screen.mode
+        server = screen.server; token = screen.token
+        experimentDisplay = screen.experiment; samplePicker = screen.samples
+        fun button(label: String, action: () -> Unit) { actions[label] = action }
+        samplePicker.apply {
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
                 override fun onItemSelected(parent: AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
@@ -83,11 +74,10 @@ class MainActivity : Activity() {
                 }
             }
         }
-        page.addView(samplePicker)
         button("导入运行配置 JSON") { choose("application/json", 14) }
         button("导入样本清单 JSON") { choose("application/json", 15) }
         button("退出实验模式") {
-            if (recording || busy.get()) { display.text = "请先结束当前操作"; return@button }
+            if (recording || busy.get()) { setStatus("请先结束当前操作"); return@button }
             activeRun = null; activeCatalog = null
             preferences.edit().remove("active_run").remove("active_samples").apply()
             refreshExperiment()
@@ -97,14 +87,14 @@ class MainActivity : Activity() {
         button("导入模型包 ZIP") { choose("application/zip", 11) }
         button("录音 / 停止并分析") {
             if (!recording) {
-                if (busy.get()) { display.text = "请等待当前操作结束"; return@button }
+                if (busy.get()) { setStatus("请等待当前操作结束"); return@button }
                 if (!readyFor(InputSource.RECORDING)) return@button
                 if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED)
                     requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), 1)
-                else try { recorder.start(); recording = true; display.text = "录音中，最长 60 秒" }
-                catch (error: Exception) { display.text = "录音失败，请导入 WAV。 " + error.javaClass.simpleName }
+                else try { recorder.start(); recording = true; screen.setRecording(true); setStatus("正在录音 · 再次点击停止并分析") }
+                catch (error: Exception) { setStatus("录音失败，请导入 WAV。 " + error.javaClass.simpleName) }
             } else {
-                recording = false
+                recording = false; screen.setRecording(false)
                 analyze(InputSource.RECORDING, System.nanoTime()) { prepared(recorder.stop()) }
             }
         }
@@ -112,16 +102,12 @@ class MainActivity : Activity() {
         button("取消当前任务") {
             cancelled.set(true)
             coordinator?.current()?.let { coordinator?.cancel(it.taskId) }
-            display.text = "当前任务已取消"
+            setStatus("当前任务已取消")
         }
         button("导出最近 WAV") {
             if (!lastAudio.available()) setStatus("尚无已保存音频") else createExport("audio/wav", "answer.wav", 12)
         }
         button("导出实验事件 JSONL") { createExport("application/json", "events.jsonl", 13) }
-        display = TextView(this).apply { text = "初始化中" }
-        timingDisplay = TextView(this)
-        page.addView(display); page.addView(timingDisplay)
-        setContentView(ScrollView(this).apply { addView(page) })
         worker.execute {
             try {
                 val installed = File(filesDir, "models")
@@ -138,7 +124,7 @@ class MainActivity : Activity() {
                     ExperimentFiles.samples(File(directory, "samples/" + it + ".json").readBytes()) }
                 runOnUiThread { activeRun = run; activeCatalog = catalog; refreshExperiment(); setStatus(if (File(filesDir, "models/manifest.json").isFile) "就绪 · 模型清单已安装" else "就绪 · 请先导入模型包") }
             } catch (error: Exception) {
-                runOnUiThread { display.text = "初始化失败，请重新导入配置。 " + error.javaClass.simpleName; refreshExperiment() }
+                runOnUiThread { setStatus("初始化失败，请重新导入配置。 " + error.javaClass.simpleName); refreshExperiment() }
             } finally { initializing.set(false); busy.set(false) }
         }
     }
@@ -146,7 +132,6 @@ class MainActivity : Activity() {
     private fun setStatus(message: String) {
         if (isDestroyed) return
         statusBanner.text = message
-        display.text = message
     }
 
     private data class PreparedAudio(val audio: Audio, val wavSha256: String)
@@ -190,14 +175,9 @@ class MainActivity : Activity() {
     }
     private fun showRecord(engine: TaskCoordinator, record: TaskRecord) {
         if (coordinator !== engine) return
-        statusBanner.text = "任务 " + record.status.name + (record.error?.let { " · " + it.name } ?: "")
         timingDisplay.text = TaskMeasurements.text(record)
-        display.text = record.feedback?.let { feedback ->
-            feedback.transcript.fullText + "\n\n" + feedback.matches.values.joinToString("\n") {
-                it.keypointId + " " + (if (it.covered) "已覆盖" else "可能遗漏") + " " +
-                    "%.3f".format(it.score) + "\n依据 " + it.evidenceText
-            }
-        } ?: (record.status.name + " " + (record.error?.name ?: ""))
+        if (record.feedback == null) display.text = "分析状态：" + record.status.name + (record.error?.let { " · " + it.name } ?: "")
+        screen.render(record)
         val key = record.taskId + ":" + record.attempt
         if (record.status == TaskStatus.SUCCEEDED && !record.visible && visibleScheduled != key) {
             visibleScheduled = key
@@ -228,18 +208,18 @@ class MainActivity : Activity() {
             source == InputSource.RECORDING && samplePicker.selectedItemPosition == 0 -> "录音实验须先选择登记样本"
             else -> null
         }
-        if (error != null) display.text = error
+        if (error != null) setStatus(error)
         return error == null
     }
     private fun choose(type: String, code: Int) {
-        if (recording || busy.get()) { display.text = "请先结束当前录音或操作"; return }
+        if (recording || busy.get()) { setStatus("请先结束当前录音或操作"); return }
         startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             this.type = type; addCategory(Intent.CATEGORY_OPENABLE)
         }, code)
     }
     private fun createExport(type: String, filename: String, code: Int) {
         if (recording || busy.get() || coordinator?.current()?.let { it.status == TaskStatus.SUCCEEDED && !it.visible } == true) {
-            display.text = "请等待当前操作及反馈展示完成"; return
+            setStatus("请等待当前操作及反馈展示完成"); return
         }
         startActivityForResult(Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
             this.type = type; putExtra(Intent.EXTRA_TITLE, filename); addCategory(Intent.CATEGORY_OPENABLE)
@@ -280,8 +260,8 @@ class MainActivity : Activity() {
         val selected = PlanMode.valueOf(mode.selectedItem.toString())
         val manualPoints = points.text.toString().lines().map { it.trim() }.filter { it.isNotEmpty() }
             .mapIndexed { i, text -> Keypoint("k" + (i + 1), text) }
-        if (!busy.compareAndSet(false, true)) { display.text = "请等待当前操作结束"; return }
-        cancelled.set(false); timingDisplay.text = "准备输入和运行配置"; display.text = "分析中"
+        if (!busy.compareAndSet(false, true)) { setStatus("请等待当前操作结束"); return }
+        cancelled.set(false); timingDisplay.text = "准备输入和运行配置"; screen.clearFeedback(); setStatus("正在分析 · 首次加载模型可能需要稍等")
         worker.execute {
             try {
                 val prepStarted = System.nanoTime()
@@ -313,7 +293,7 @@ class MainActivity : Activity() {
                 val task = engine.begin(plan, source, bound?.runId ?: ("manual-" + UUID.randomUUID()),
                     bound?.sample?.id ?: ("unregistered-" + UUID.randomUUID()), bound?.sample?.effective,
                     submittedAtNanos = submitted, experiment = bound?.link)
-                if (bound != null) runOnUiThread { points.setText(keypoints.joinToString("\n") { it.text }) }
+                runOnUiThread { screen.setReference(keypoints); if (bound != null) points.setText(keypoints.joinToString("\n") { it.text }) }
                 if (cancelled.get()) engine.cancel(task.taskId)
                 engine.run(task.taskId, keypoints, 120000, priorAudioPreparationMs = prepMs) {
                     if (run != null) ExperimentFiles.checkAudio(run, captured.audio)
@@ -323,7 +303,7 @@ class MainActivity : Activity() {
                 runOnUiThread { if (!isDestroyed && coordinator === engine) engine.current()?.let { showRecord(engine, it) } }
             } catch (error: Throwable) {
                 if (error is VirtualMachineError || error is ThreadDeath) throw error
-                runOnUiThread { display.text = "执行或配置校验失败：" + (error.message ?: error.javaClass.simpleName) }
+                runOnUiThread { setStatus("执行或配置校验失败：" + (error.message ?: error.javaClass.simpleName)) }
             } finally { busy.set(false) }
         }
     }
@@ -343,7 +323,7 @@ class MainActivity : Activity() {
             }
             return
         }
-        if (!busy.compareAndSet(false, true)) { display.text = "请等待当前操作结束"; return }
+        if (!busy.compareAndSet(false, true)) { setStatus("请等待当前操作结束"); return }
         worker.execute {
             try {
                 runOnUiThread { setStatus(if (code == 11) "正在导入模型，请保持应用在前台，不要重复点击" else "正在处理，请稍候") }
@@ -419,6 +399,7 @@ class MainActivity : Activity() {
         backup.deleteRecursively()
     }
     override fun onDestroy() {
+        screen.close()
         cancelled.set(true)
         coordinator?.current()?.let { coordinator?.cancel(it.taskId) }
         if (recording) { recording = false; worker.execute { recorder.stop() } }
