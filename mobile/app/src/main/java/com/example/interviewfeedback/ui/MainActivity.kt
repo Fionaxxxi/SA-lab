@@ -42,12 +42,15 @@ class MainActivity : Activity() {
     private var modules: RealModules? = null
     @Volatile private var coordinator: TaskCoordinator? = null
     private val busy = java.util.concurrent.atomic.AtomicBoolean(true)
+    private val initializing = java.util.concurrent.atomic.AtomicBoolean(true)
     private val cancelled = java.util.concurrent.atomic.AtomicBoolean(false)
     private var recording = false
-    private var latestAudio: Audio? = null
+    private lateinit var lastAudio: LastAudioStore
+    private lateinit var statusBanner: TextView
 
     override fun onCreate(state: Bundle?) {
         super.onCreate(state)
+        lastAudio = LastAudioStore(File(filesDir, "last.wav"))
         experiments = FileExperimentStore(File(filesDir, "experiments"))
         val preferences = getSharedPreferences("experiment", MODE_PRIVATE)
         deviceId = preferences.getString("device_id", null) ?: ("android-" + UUID.randomUUID()).also {
@@ -58,6 +61,8 @@ class MainActivity : Activity() {
             page.addView(Button(this).apply { text = label; setOnClickListener { action() } })
         }
         page.addView(TextView(this).apply { text = "语音回答分析" })
+        statusBanner = TextView(this).apply { text = "正在初始化"; setPadding(8, 12, 8, 12); setBackgroundColor(0xFFE7F4F2.toInt()) }
+        page.addView(statusBanner)
         points = EditText(this).apply { setText("调查居民需求\n组织分层宣传\n评估宣传效果"); hint = "每行一个参考要点" }
         page.addView(points)
         mode = Spinner(this).apply { adapter = ArrayAdapter(this@MainActivity,
@@ -110,7 +115,7 @@ class MainActivity : Activity() {
             display.text = "当前任务已取消"
         }
         button("导出最近 WAV") {
-            if (latestAudio == null) display.text = "尚无音频" else createExport("audio/wav", "answer.wav", 12)
+            if (!lastAudio.available()) setStatus("尚无已保存音频") else createExport("audio/wav", "answer.wav", 12)
         }
         button("导出实验事件 JSONL") { createExport("application/json", "events.jsonl", 13) }
         display = TextView(this).apply { text = "初始化中" }
@@ -131,11 +136,17 @@ class MainActivity : Activity() {
                 val catalog = preferences.getString("active_samples", null)?.let {
                     require(it.matches(Regex("[0-9a-f]{64}")))
                     ExperimentFiles.samples(File(directory, "samples/" + it + ".json").readBytes()) }
-                runOnUiThread { activeRun = run; activeCatalog = catalog; refreshExperiment(); display.text = "就绪" }
+                runOnUiThread { activeRun = run; activeCatalog = catalog; refreshExperiment(); setStatus(if (File(filesDir, "models/manifest.json").isFile) "就绪 · 模型清单已安装" else "就绪 · 请先导入模型包") }
             } catch (error: Exception) {
                 runOnUiThread { display.text = "初始化失败，请重新导入配置。 " + error.javaClass.simpleName; refreshExperiment() }
-            } finally { busy.set(false) }
+            } finally { initializing.set(false); busy.set(false) }
         }
+    }
+
+    private fun setStatus(message: String) {
+        if (isDestroyed) return
+        statusBanner.text = message
+        display.text = message
     }
 
     private data class PreparedAudio(val audio: Audio, val wavSha256: String)
@@ -179,6 +190,7 @@ class MainActivity : Activity() {
     }
     private fun showRecord(engine: TaskCoordinator, record: TaskRecord) {
         if (coordinator !== engine) return
+        statusBanner.text = "任务 " + record.status.name + (record.error?.let { " · " + it.name } ?: "")
         timingDisplay.text = TaskMeasurements.text(record)
         display.text = record.feedback?.let { feedback ->
             feedback.transcript.fullText + "\n\n" + feedback.matches.values.joinToString("\n") {
@@ -273,7 +285,7 @@ class MainActivity : Activity() {
         worker.execute {
             try {
                 val prepStarted = System.nanoTime()
-                val captured = audio().also { latestAudio = it.audio }
+                val captured = audio()
                 val prepMs = (System.nanoTime() - prepStarted) / 1_000_000L
                 if (cancelled.get()) return@execute
                 require((run == null) == (catalog == null)) { "请同时导入运行配置和样本清单，或退出实验模式" }
@@ -305,7 +317,7 @@ class MainActivity : Activity() {
                 if (cancelled.get()) engine.cancel(task.taskId)
                 engine.run(task.taskId, keypoints, 120000, priorAudioPreparationMs = prepMs) {
                     if (run != null) ExperimentFiles.checkAudio(run, captured.audio)
-                    File(filesDir, "last.wav").outputStream().use { WavPcmIO.write(captured.audio, it) }
+                    lastAudio.save(captured.audio)
                     captured.audio
                 }
                 runOnUiThread { if (!isDestroyed && coordinator === engine) engine.current()?.let { showRecord(engine, it) } }
@@ -320,6 +332,10 @@ class MainActivity : Activity() {
         super.onActivityResult(code, result, data)
         if (result != RESULT_OK) return
         val uri = data?.data ?: return
+        if (initializing.get()) {
+            worker.execute { runOnUiThread { if (!isDestroyed) onActivityResult(code, result, data) } }
+            return
+        }
         if (code == 10) {
             analyze(InputSource.IMPORT, System.nanoTime()) {
                 val bytes = readBounded(checkNotNull(contentResolver.openInputStream(uri)))
@@ -330,9 +346,10 @@ class MainActivity : Activity() {
         if (!busy.compareAndSet(false, true)) { display.text = "请等待当前操作结束"; return }
         worker.execute {
             try {
+                runOnUiThread { setStatus(if (code == 11) "正在导入模型，请保持应用在前台，不要重复点击" else "正在处理，请稍候") }
                 when (code) {
                     11 -> importModels(checkNotNull(contentResolver.openInputStream(uri)))
-                    12 -> latestAudio?.let { audio -> checkNotNull(contentResolver.openOutputStream(uri)).use { WavPcmIO.write(audio, it) } }
+                    12 -> checkNotNull(contentResolver.openOutputStream(uri)).use { lastAudio.export(it) }
                     13 -> checkNotNull(contentResolver.openOutputStream(uri)).use { output ->
                         val file = File(filesDir, "events.jsonl")
                         if (file.isFile) file.inputStream().use { it.copyTo(output) }
@@ -350,9 +367,15 @@ class MainActivity : Activity() {
                     16 -> checkNotNull(contentResolver.openOutputStream(uri)).use { it.write(deviceInfo().toString(2).toByteArray(Charsets.UTF_8)) }
                     17 -> experiments.export(File(filesDir, "events.jsonl"), checkNotNull(contentResolver.openOutputStream(uri)))
                 }
-                runOnUiThread { display.text = "导入或导出完成" }
+                val completed = when (code) {
+                    11 -> "模型导入成功，文件已校验，可选择 LOCAL 开始分析"
+                    12 -> "WAV 导出成功，请在所选保存位置查看 answer.wav"
+                    13 -> "事件日志导出成功"
+                    else -> "导入或导出完成"
+                }
+                runOnUiThread { setStatus(completed) }
             } catch (error: Exception) {
-                runOnUiThread { display.text = "操作失败：" + (error.message ?: error.javaClass.simpleName) }
+                runOnUiThread { setStatus("操作失败：" + (error.message ?: error.javaClass.simpleName)) }
             } finally { busy.set(false) }
         }
     }
@@ -362,6 +385,7 @@ class MainActivity : Activity() {
         directory.deleteRecursively(); directory.mkdirs()
         ZipInputStream(input).use { zip ->
             var total = 0L
+            var reported = 0L
             while (true) {
                 val entry = zip.nextEntry ?: break
                 val target = File(directory, entry.name).canonicalFile
@@ -374,6 +398,11 @@ class MainActivity : Activity() {
                             val count = zip.read(buffer)
                             if (count < 0) break
                             total += count; require(total <= 5L * 1024 * 1024 * 1024)
+                            if (total - reported >= 64L * 1024 * 1024) {
+                                reported = total
+                                val mb = total / (1024 * 1024)
+                                runOnUiThread { setStatus("正在解压模型，已处理 " + mb + " MB，请保持应用在前台") }
+                            }
                             output.write(buffer, 0, count)
                         }
                     }
@@ -381,6 +410,7 @@ class MainActivity : Activity() {
             }
         }
         val manifest = JSONObject(File(directory, "manifest.json").readText(Charsets.UTF_8))
+        runOnUiThread { setStatus("解压完成，正在逐个校验模型文件，请等待") }
         RealModules.verifyArtifacts(directory, manifest)
         val installed = File(filesDir, "models"); val backup = File(filesDir, "models-backup")
         backup.deleteRecursively()
