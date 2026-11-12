@@ -20,3 +20,5 @@
 
 
 APK 0.2.0 的节点计时面板、运行配置/样本自动关联及完整记录导出见 [实验操作说明](docs/experiment-workflow.md)。正式采集前先导出设备信息并用 mobile_experiment.py 生成配置。
+
+质量审核统计、逐观测 CER 分布和报告入口见 [质量报告说明](docs/quality-report.md)。运行 python -m experiments.scripts.quality_metrics <审核JSON> --output <新目录>。

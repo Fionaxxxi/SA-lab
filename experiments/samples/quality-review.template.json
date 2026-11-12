@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "condition": "UNREVIEWED",
+  "notes": "待填写并由实际参与者复核；本模板不是已完成的人工标注。",
+  "records": [
+    {
+      "sample_id": "TODO-S01",
+      "run_id": "TODO-run",
+      "device_id": "TODO-device",
+      "task_id": "TODO-task",
+      "topic_id": "TODO-topic",
+      "split": "evaluation",
+      "model_version": "TODO-model",
+      "config_version": "TODO-config",
+      "mode": "LOCAL",
+      "input_source": "IMPORT",
+      "effective_input": null,
+      "reference_text": "",
+      "actual_text": "",
+      "matches": [
+        {
+          "keypoint_id": "k1",
+          "expected_covered": null,
+          "actual_covered": null,
+          "actual_evidence_sentence_id": null,
+          "accepted_evidence_sentence_ids": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "condition": "FIXTURE",
+  "notes": "Constructed text/labels for arithmetic tests only. No human recording, annotator or reviewer claimed.",
+  "records": [
+    {
+      "sample_id": "fixture-q1",
+      "run_id": "quality-fixture-run",
+      "device_id": "fixture-device",
+      "task_id": "fixture-task-1",
+      "topic_id": "fixture-topic-1",
+      "split": "evaluation",
+      "model_version": "fixture-model",
+      "config_version": "fixture-rules",
+      "mode": "LOCAL",
+      "input_source": "IMPORT",
+      "effective_input": true,
+      "reference_text": "甲， 乙！",
+      "actual_text": "甲 乙",
+      "matches": [
+        {
+          "keypoint_id": "k1",
+          "expected_covered": true,
+          "actual_covered": true,
+          "actual_evidence_sentence_id": "s1",
+          "accepted_evidence_sentence_ids": [
+            "s1"
+          ]
+        },
+        {
+          "keypoint_id": "k2",
+          "expected_covered": false,
+          "actual_covered": false
+        },
+        {
+          "keypoint_id": "k3",
+          "expected_covered": false,
+          "actual_covered": true,
+          "actual_evidence_sentence_id": "s2",
+          "accepted_evidence_sentence_ids": []
+        },
+        {
+          "keypoint_id": "k4",
+          "expected_covered": true,
+          "actual_covered": false
+        }
+      ]
+    },
+    {
+      "sample_id": "fixture-q2",
+      "run_id": "quality-fixture-run",
+      "device_id": "fixture-device",
+      "task_id": "fixture-task-2",
+      "topic_id": "fixture-topic-2",
+      "split": "evaluation",
+      "model_version": "fixture-model",
+      "config_version": "fixture-rules",
+      "mode": "LOCAL",
+      "input_source": "IMPORT",
+      "effective_input": true,
+      "reference_text": "丙丁",
+      "actual_text": "丙戊",
+      "matches": [
+        {
+          "keypoint_id": "k1",
+          "expected_covered": true,
+          "actual_covered": true,
+          "actual_evidence_sentence_id": "s1",
+          "accepted_evidence_sentence_ids": [
+            "s1"
+          ]
+        }
+      ]
+    },
+    {
+      "sample_id": "fixture-q3",
+      "run_id": "quality-fixture-run",
+      "device_id": "fixture-device",
+      "task_id": "fixture-task-3",
+      "topic_id": "fixture-topic-3",
+      "split": "evaluation",
+      "model_version": "fixture-model",
+      "config_version": "fixture-rules",
+      "mode": "LOCAL",
+      "input_source": "IMPORT",
+      "effective_input": true,
+      "reference_text": "己庚",
+      "actual_text": "",
+      "matches": [
+        {
+          "keypoint_id": "k1",
+          "expected_covered": true,
+          "actual_covered": false
+        }
+      ]
+    },
+    {
+      "sample_id": "fixture-q4",
+      "run_id": "quality-fixture-run",
+      "device_id": "fixture-device",
+      "task_id": "fixture-task-4",
+      "topic_id": "fixture-topic-4",
+      "split": "evaluation",
+      "model_version": "fixture-model",
+      "config_version": "fixture-rules",
+      "mode": "LOCAL",
+      "input_source": "IMPORT",
+      "effective_input": true,
+      "reference_text": "辛",
+      "actual_text": "辛壬癸",
+      "matches": []
+    },
+    {
+      "sample_id": "fixture-q5",
+      "run_id": "quality-fixture-run",
+      "device_id": "fixture-device",
+      "task_id": "fixture-task-5",
+      "topic_id": "fixture-topic-5",
+      "split": "evaluation",
+      "model_version": "fixture-model",
+      "config_version": "fixture-rules",
+      "mode": "LOCAL",
+      "input_source": "IMPORT",
+      "effective_input": false,
+      "reference_text": "",
+      "actual_text": "噪声",
+      "matches": []
+    }
+  ]
+}

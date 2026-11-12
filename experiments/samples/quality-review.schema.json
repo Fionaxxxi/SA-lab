@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Quality review records v1",
+  "oneOf": [
+    {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/record"
+      }
+    },
+    {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "condition",
+        "records"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "condition": {
+          "enum": [
+            "FIXTURE",
+            "UNREVIEWED",
+            "REVIEWED"
+          ]
+        },
+        "notes": {
+          "type": "string"
+        },
+        "records": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/record"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  ],
+  "$defs": {
+    "record": {
+      "type": "object",
+      "required": [
+        "reference_text",
+        "actual_text",
+        "matches"
+      ],
+      "properties": {
+        "sample_id": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "run_id": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "device_id": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "task_id": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "topic_id": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "split": {
+          "enum": [
+            "calibration",
+            "evaluation"
+          ]
+        },
+        "model_version": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "config_version": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "mode": {
+          "enum": [
+            "LOCAL",
+            "REMOTE",
+            "MANUAL_MIXED"
+          ]
+        },
+        "input_source": {
+          "enum": [
+            "IMPORT",
+            "RECORDING"
+          ]
+        },
+        "effective_input": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "audio_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "annotator": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "reviewer": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "consent": {
+          "type": "boolean"
+        },
+        "reference_text": {
+          "type": "string"
+        },
+        "actual_text": {
+          "type": "string"
+        },
+        "matches": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "expected_covered",
+              "actual_covered"
+            ],
+            "properties": {
+              "keypoint_id": {
+                "type": "string",
+                "pattern": "\\S"
+              },
+              "expected_covered": {
+                "type": "boolean"
+              },
+              "actual_covered": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "actual_evidence_sentence_id": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "\\S"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "accepted_evidence_sentence_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "\\S"
+                },
+                "uniqueItems": true
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "actual_covered": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "actual_covered"
+                  ]
+                },
+                "then": {
+                  "required": [
+                    "actual_evidence_sentence_id",
+                    "accepted_evidence_sentence_ids"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

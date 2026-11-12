@@ -42,3 +42,6 @@ __pycache__/
 
 # Native build intermediates
 .cxx/
+
+# Local quality review reports
+/experiments/results/quality-local/
