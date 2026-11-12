@@ -12,6 +12,9 @@ data class TaskRecord(
     val feedback: Feedback? = null, val error: ErrorCode? = null,
     val visible: Boolean = false, val effectiveInput: Boolean? = null,
     val audioSamples: Int? = null,
+    val measurements: List<ModuleMeasurement> = emptyList(),
+    val totalElapsedMs: Long? = null, val feedbackElapsedMs: Long? = null,
+    val experiment: ExperimentLink? = null,
 )
 
 interface TaskJournal {
@@ -41,7 +44,7 @@ class TaskCoordinator(
         journal.unfinished().forEach {
             val recovered = it.copy(status = TaskStatus.INTERRUPTED)
             journal.save(recovered)
-            events.append(TaskEvent(recovered, "TASK_TERMINAL", recovered.status.name))
+            publish(TaskEvent(recovered, "TASK_TERMINAL", recovered.status.name))
         }
     }
 
@@ -54,19 +57,21 @@ class TaskCoordinator(
         plan: ExecutionPlan, source: InputSource, runId: String, sampleId: String,
         effectiveInput: Boolean? = null,
         submittedAtNanos: Long = System.nanoTime(),
+        experiment: ExperimentLink? = null,
     ): TaskRecord {
         check(workerTask == null && current?.status !in setOf(TaskStatus.CREATED, TaskStatus.RUNNING))
         val record = TaskRecord(UUID.randomUUID().toString(), plan, source, runId, sampleId,
-            submittedAtNanos / 1_000_000L, effectiveInput = effectiveInput)
+            submittedAtNanos / 1_000_000L, effectiveInput = effectiveInput, experiment = experiment)
         journal.save(record)
         current = record
-        events.append(TaskEvent(record, "TASK_SUBMITTED", record.status.name))
+        publish(TaskEvent(record, "TASK_SUBMITTED", record.status.name))
         return record
     }
 
     /** Run on a background executor. prepareAudio and local/remote adapters never touch UI. */
-    fun run(taskId: String, keypoints: List<Keypoint>, budgetMs: Int, prepareAudio: () -> Audio) {
-        require(budgetMs > 0)
+    fun run(taskId: String, keypoints: List<Keypoint>, budgetMs: Int,
+            priorAudioPreparationMs: Long = 0, prepareAudio: () -> Audio) {
+        require(budgetMs > 0 && priorAudioPreparationMs >= 0)
         val active = synchronized(this) {
             val record = current
             if (record?.taskId != taskId || record.status != TaskStatus.CREATED || workerTask != null) return
@@ -89,8 +94,8 @@ class TaskCoordinator(
                 val code = (failure as? ModuleFailure)?.code ?: ErrorCode.INTERNAL_ERROR
                 synchronized(this) {
                     if (isActive(active)) {
-                        events.append(TaskEvent(active, "MODULE_END", "ERROR", Module.M0,
-                            Executor.LOCAL, Timing(nowMs() - started), code))
+                        publish(TaskEvent(active, "MODULE_END", "ERROR", Module.M0,
+                            Executor.LOCAL, Timing(nowMs() - started + priorAudioPreparationMs), code))
                     }
                 }
                 throw ModuleFailure(code)
@@ -100,8 +105,8 @@ class TaskCoordinator(
                 val captured = active.copy(audioSamples = audio.sampleCount)
                 journal.save(captured)
                 current = captured
-                events.append(TaskEvent(captured, "MODULE_END", "OK", Module.M0, Executor.LOCAL,
-                    Timing(nowMs() - started)))
+                publish(TaskEvent(captured, "MODULE_END", "OK", Module.M0, Executor.LOCAL,
+                    Timing(nowMs() - started + priorAudioPreparationMs)))
             }
             val segments = step(active, Module.M1, audio, deadline) as Segments
             val transcript = step(active, Module.M2, segments, deadline) as Transcript
@@ -116,7 +121,7 @@ class TaskCoordinator(
                 )
                 journal.save(success)
                 current = success
-                events.append(TaskEvent(success, "MODULE_END", "OK", Module.M5, Executor.LOCAL,
+                publish(TaskEvent(success, "MODULE_END", "OK", Module.M5, Executor.LOCAL,
                     Timing(nowMs() - saveStarted)))
                 terminalEvent(success)
             }
@@ -151,7 +156,7 @@ class TaskCoordinator(
         val visible = record.copy(visible = true)
         journal.save(visible)
         current = visible
-        events.append(TaskEvent(visible, "FEEDBACK_VISIBLE", "OK",
+        publish(TaskEvent(visible, "FEEDBACK_VISIBLE", "OK",
             timing = Timing((visibleAtNanos / 1_000_000L - visible.submittedAtMs).coerceAtLeast(0))))
         return true
     }
@@ -180,7 +185,7 @@ class TaskCoordinator(
             val record = checkNotNull(current)
             val sameId = result.id == id && result.executor == side
             if (!isActive(active) || !sameId) {
-                events.append(TaskEvent(record, "MODULE_END", "IGNORED", module, side, result.timing,
+                publish(TaskEvent(record, "MODULE_END", "IGNORED", module, side, result.timing,
                     if (sameId) null else ErrorCode.VERSION_MISMATCH))
                 if (!isActive(active)) throw TaskStopped()
                 throw ModuleFailure(ErrorCode.VERSION_MISMATCH)
@@ -190,7 +195,7 @@ class TaskCoordinator(
                 nowMs() >= deadline -> ErrorCode.DEADLINE_EXCEEDED
                 else -> null
             }
-            events.append(TaskEvent(record, "MODULE_END", if (code == null) "OK" else "ERROR",
+            publish(TaskEvent(record, "MODULE_END", if (code == null) "OK" else "ERROR",
                 module, side, result.timing, code))
             if (code != null) throw ModuleFailure(code)
             return (result as ModuleResult.Ok).output
@@ -205,8 +210,27 @@ class TaskCoordinator(
     }
 
     private fun terminalEvent(record: TaskRecord) {
-        events.append(TaskEvent(record, "TASK_TERMINAL", record.status.name,
+        publish(TaskEvent(record, "TASK_TERMINAL", record.status.name,
             timing = Timing(nowMs() - record.submittedAtMs), error = record.error))
+    }
+
+    /** Persist the same timings that are sent to the UI and exported as events. */
+    private fun publish(event: TaskEvent) {
+        val active = current
+        if (active?.taskId != event.task.taskId || active.attempt != event.task.attempt) {
+            events.append(event)
+            return
+        }
+        val updated = when {
+            event.event == "MODULE_END" && event.status != "IGNORED" && event.module != null && event.timing != null ->
+                active.copy(measurements = active.measurements.filterNot { it.module == event.module } +
+                    ModuleMeasurement(event.module, checkNotNull(event.executor), event.status, event.timing, event.error))
+            event.event == "TASK_TERMINAL" -> active.copy(totalElapsedMs = event.timing?.elapsedMs)
+            event.event == "FEEDBACK_VISIBLE" -> active.copy(feedbackElapsedMs = event.timing?.elapsedMs)
+            else -> active
+        }
+        if (updated !== active) { journal.save(updated); current = updated }
+        events.append(event.copy(task = updated))
     }
 
     private class TaskStopped : Exception()

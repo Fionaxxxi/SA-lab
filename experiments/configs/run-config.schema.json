@@ -281,6 +281,25 @@
             "FIXED",
             "FIXTURE"
           ]
+        },
+        "mode": {
+          "enum": [
+            "LOCAL",
+            "REMOTE",
+            "MANUAL_MIXED"
+          ]
+        },
+        "remote_modules": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "M1",
+              "M2",
+              "M3",
+              "M4"
+            ]
+          },
+          "uniqueItems": true
         }
       },
       "required": [
@@ -294,7 +313,71 @@
         "warmup",
         "cache_policy"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "mode"
+            ],
+            "properties": {
+              "mode": {
+                "const": "LOCAL"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "remote_modules": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "mode"
+            ],
+            "properties": {
+              "mode": {
+                "const": "REMOTE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "remote_modules": {
+                "minItems": 4,
+                "maxItems": 4
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "mode"
+            ],
+            "properties": {
+              "mode": {
+                "const": "MANUAL_MIXED"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "remote_modules"
+            ],
+            "properties": {
+              "remote_modules": {
+                "minItems": 1,
+                "maxItems": 3
+              }
+            }
+          }
+        }
+      ]
     }
   },
   "required": [

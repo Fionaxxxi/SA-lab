@@ -3,10 +3,14 @@ package com.example.interviewfeedback.ui
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Build
+import android.os.BatteryManager
+import android.os.PowerManager
 import android.widget.*
+import com.example.interviewfeedback.BuildConfig
 import com.example.interviewfeedback.application.*
 import com.example.interviewfeedback.application.Module
 import com.example.interviewfeedback.analysis.semantic.RealModules
@@ -14,7 +18,8 @@ import com.example.interviewfeedback.capture.*
 import com.example.interviewfeedback.transport.*
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.json.JSONObject
-import java.io.File
+import java.io.*
+import java.util.UUID
 import java.util.concurrent.Executors
 import java.util.zip.ZipInputStream
 
@@ -22,155 +27,291 @@ class MainActivity : Activity() {
     private val worker = Executors.newSingleThreadExecutor()
     private val recorder = InterviewAudioRecorder()
     private lateinit var display: TextView
+    private lateinit var timingDisplay: TextView
+    private lateinit var experimentDisplay: TextView
     private lateinit var server: EditText
     private lateinit var token: EditText
     private lateinit var points: EditText
     private lateinit var mode: Spinner
+    private lateinit var samplePicker: Spinner
+    private lateinit var experiments: FileExperimentStore
+    private lateinit var deviceId: String
+    private var activeRun: RunDefinition? = null
+    private var activeCatalog: SampleCatalog? = null
+    private var visibleScheduled: String? = null
     private var modules: RealModules? = null
     @Volatile private var coordinator: TaskCoordinator? = null
-    private val busy = java.util.concurrent.atomic.AtomicBoolean(false)
+    private val busy = java.util.concurrent.atomic.AtomicBoolean(true)
     private val cancelled = java.util.concurrent.atomic.AtomicBoolean(false)
     private var recording = false
     private var latestAudio: Audio? = null
 
     override fun onCreate(state: Bundle?) {
         super.onCreate(state)
+        experiments = FileExperimentStore(File(filesDir, "experiments"))
+        val preferences = getSharedPreferences("experiment", MODE_PRIVATE)
+        deviceId = preferences.getString("device_id", null) ?: ("android-" + UUID.randomUUID()).also {
+            preferences.edit().putString("device_id", it).apply()
+        }
         val page = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(24, 20, 24, 20) }
         fun button(label: String, action: () -> Unit) {
             page.addView(Button(this).apply { text = label; setOnClickListener { action() } })
         }
-        page.addView(TextView(this).apply { text = "如何组织社区反诈宣传" })
-        points = EditText(this).apply {
-            setText("调查居民需求\n组织分层宣传\n评估宣传效果")
-            hint = "每行一个参考要点"
-        }
+        page.addView(TextView(this).apply { text = "语音回答分析" })
+        points = EditText(this).apply { setText("调查居民需求\n组织分层宣传\n评估宣传效果"); hint = "每行一个参考要点" }
         page.addView(points)
         mode = Spinner(this).apply { adapter = ArrayAdapter(this@MainActivity,
-            android.R.layout.simple_spinner_dropdown_item, listOf("LOCAL", "REMOTE", "MANUAL_MIXED")) }
+            android.R.layout.simple_spinner_dropdown_item, PlanMode.values().map { it.name }) }
         page.addView(mode)
         server = EditText(this).apply { hint = "电脑服务地址"; setText("http://192.168.1.2:8000") }
         token = EditText(this).apply { hint = "实验访问凭据"; inputType = 129 }
         page.addView(server); page.addView(token)
+        experimentDisplay = TextView(this)
+        page.addView(experimentDisplay)
+        samplePicker = Spinner(this).apply {
+            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) {}
+                override fun onItemSelected(parent: AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
+                    activeCatalog?.samples?.getOrNull(position - 1)?.let {
+                        if (activeRun != null) points.setText(it.keypoints.joinToString("\n") { key -> key.text })
+                    }
+                }
+            }
+        }
+        page.addView(samplePicker)
+        button("导入运行配置 JSON") { choose("application/json", 14) }
+        button("导入样本清单 JSON") { choose("application/json", 15) }
+        button("退出实验模式") {
+            if (recording || busy.get()) { display.text = "请先结束当前操作"; return@button }
+            activeRun = null; activeCatalog = null
+            preferences.edit().remove("active_run").remove("active_samples").apply()
+            refreshExperiment()
+        }
+        button("导出本机及模型信息 JSON") { createExport("application/json", "device-info.json", 16) }
+        button("导出完整实验记录 ZIP") { createExport("application/zip", "experiment-records.zip", 17) }
         button("导入模型包 ZIP") { choose("application/zip", 11) }
         button("录音 / 停止并分析") {
             if (!recording) {
                 if (busy.get()) { display.text = "请等待当前操作结束"; return@button }
-                if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                if (!readyFor(InputSource.RECORDING)) return@button
+                if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED)
                     requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), 1)
-                } else {
-                    try { recorder.start(); recording = true; display.text = "录音中，最长 60 秒" }
-                    catch (error: Exception) { display.text = "录音失败，请导入 WAV。 ${error.javaClass.simpleName}" }
-                }
+                else try { recorder.start(); recording = true; display.text = "录音中，最长 60 秒" }
+                catch (error: Exception) { display.text = "录音失败，请导入 WAV。 " + error.javaClass.simpleName }
             } else {
                 recording = false
-                val submitted = System.nanoTime()
-                analyze(InputSource.RECORDING, submitted) { recorder.stop() }
+                analyze(InputSource.RECORDING, System.nanoTime()) { prepared(recorder.stop()) }
             }
         }
-        button("导入 WAV 并分析") { choose("audio/*", 10) }
+        button("导入 WAV 并分析") { if (readyFor(InputSource.IMPORT)) choose("audio/*", 10) }
         button("取消当前任务") {
             cancelled.set(true)
             coordinator?.current()?.let { coordinator?.cancel(it.taskId) }
             display.text = "当前任务已取消"
         }
         button("导出最近 WAV") {
-            if (latestAudio == null) { display.text = "尚无音频"; return@button }
-            startActivityForResult(Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-                type = "audio/wav"; putExtra(Intent.EXTRA_TITLE, "answer.wav"); addCategory(Intent.CATEGORY_OPENABLE)
-            }, 12)
+            if (latestAudio == null) display.text = "尚无音频" else createExport("audio/wav", "answer.wav", 12)
         }
-        button("导出实验事件 JSONL") {
-            startActivityForResult(Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-                type = "application/json"; putExtra(Intent.EXTRA_TITLE, "events.jsonl"); addCategory(Intent.CATEGORY_OPENABLE)
-            }, 13)
-        }
-        display = TextView(this)
-        page.addView(display)
+        button("导出实验事件 JSONL") { createExport("application/json", "events.jsonl", 13) }
+        display = TextView(this).apply { text = "初始化中" }
+        timingDisplay = TextView(this)
+        page.addView(display); page.addView(timingDisplay)
         setContentView(ScrollView(this).apply { addView(page) })
         worker.execute {
-            val installed = File(filesDir, "models")
-            val backup = File(filesDir, "models-backup")
-            if (!installed.exists() && backup.exists()) check(backup.renameTo(installed))
-            val journal = FileTaskJournal(File(filesDir, "tasks"))
-            // Recover unfinished records on app launch even before models become available.
-            coordinator = TaskCoordinator(ModuleExecutor { throw ModuleFailure(ErrorCode.MODEL_UNAVAILABLE) },
-                ModuleExecutor { throw ModuleFailure(ErrorCode.REMOTE_UNREACHABLE) }, journal,
-                JsonlEventSink(File(filesDir, "events.jsonl")))
+            try {
+                val installed = File(filesDir, "models")
+                val backup = File(filesDir, "models-backup")
+                if (!installed.exists() && backup.exists()) check(backup.renameTo(installed))
+                coordinator = TaskCoordinator(ModuleExecutor { throw ModuleFailure(ErrorCode.MODEL_UNAVAILABLE) },
+                    ModuleExecutor { throw ModuleFailure(ErrorCode.REMOTE_UNREACHABLE) }, FileTaskJournal(File(filesDir, "tasks")), eventSink())
+                val directory = File(filesDir, "experiments")
+                val run = preferences.getString("active_run", null)?.let {
+                    require(it.matches(Regex("[0-9a-f]{64}")))
+                    ExperimentFiles.run(File(directory, "configs/" + it + ".json").readBytes()) }
+                val catalog = preferences.getString("active_samples", null)?.let {
+                    require(it.matches(Regex("[0-9a-f]{64}")))
+                    ExperimentFiles.samples(File(directory, "samples/" + it + ".json").readBytes()) }
+                runOnUiThread { activeRun = run; activeCatalog = catalog; refreshExperiment(); display.text = "就绪" }
+            } catch (error: Exception) {
+                runOnUiThread { display.text = "初始化失败，请重新导入配置。 " + error.javaClass.simpleName; refreshExperiment() }
+            } finally { busy.set(false) }
         }
     }
 
+    private data class PreparedAudio(val audio: Audio, val wavSha256: String)
+    private fun prepared(audio: Audio): PreparedAudio {
+        val bytes = ByteArrayOutputStream().also { WavPcmIO.write(audio, it) }.toByteArray()
+        return PreparedAudio(audio, ExperimentFiles.sha256(bytes))
+    }
+    private fun readBounded(input: InputStream, limit: Int = 8 * 1024 * 1024): ByteArray = input.use {
+        val output = ByteArrayOutputStream()
+        val buffer = ByteArray(65536)
+        while (true) {
+            val count = it.read(buffer)
+            if (count < 0) break
+            require(output.size().toLong() + count <= limit) { "文件超过大小上限" }
+            output.write(buffer, 0, count)
+        }
+        output.toByteArray()
+    }
+    private fun refreshExperiment() {
+        val run = activeRun
+        val catalog = activeCatalog
+        experimentDisplay.text = if (run == null && catalog == null) "普通模式 · 样本未登记，不进入正式实验" else
+            "运行 " + (run?.runId ?: "待导入") + " · " + (run?.condition ?: "") +
+                "\n样本清单 " + (catalog?.samples?.size ?: 0) + " 条 · 输入 " + (run?.source?.name ?: "待定")
+        mode.isEnabled = run == null; points.isEnabled = run == null
+        if (run != null) mode.setSelection(PlanMode.values().indexOf(run.plan.mode))
+        samplePicker.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item,
+            listOf("导入 WAV 时按哈希自动匹配") + (catalog?.samples?.map { it.id + " · " + if (it.effective) "有效" else "无效" } ?: emptyList()))
+    }
+    private fun eventSink(): EventSink {
+        val sink = JsonlEventSink(File(filesDir, "events.jsonl"))
+        return EventSink { event ->
+            sink.append(event)
+            runOnUiThread {
+                val engine = coordinator
+                val task = engine?.current()
+                if (!isDestroyed && engine != null && task?.taskId == event.task.taskId && task.attempt == event.task.attempt)
+                    showRecord(engine, task)
+            }
+        }
+    }
+    private fun showRecord(engine: TaskCoordinator, record: TaskRecord) {
+        if (coordinator !== engine) return
+        timingDisplay.text = TaskMeasurements.text(record)
+        display.text = record.feedback?.let { feedback ->
+            feedback.transcript.fullText + "\n\n" + feedback.matches.values.joinToString("\n") {
+                it.keypointId + " " + (if (it.covered) "已覆盖" else "可能遗漏") + " " +
+                    "%.3f".format(it.score) + "\n依据 " + it.evidenceText
+            }
+        } ?: (record.status.name + " " + (record.error?.name ?: ""))
+        val key = record.taskId + ":" + record.attempt
+        if (record.status == TaskStatus.SUCCEEDED && !record.visible && visibleScheduled != key) {
+            visibleScheduled = key
+            val listener = object : android.view.ViewTreeObserver.OnDrawListener {
+                private var posted = false
+                override fun onDraw() {
+                    if (posted || !display.isShown || display.windowVisibility != android.view.View.VISIBLE) return
+                    posted = true
+                    display.post {
+                        if (display.viewTreeObserver.isAlive) display.viewTreeObserver.removeOnDrawListener(this)
+                        if (worker.isShutdown || isDestroyed || coordinator !== engine) return@post
+                        val visible = System.nanoTime()
+                        worker.execute { engine.markFeedbackVisible(record.taskId, record.attempt, visible) }
+                    }
+                }
+            }
+            display.viewTreeObserver.addOnDrawListener(listener)
+            display.invalidate()
+        }
+    }
+    private fun readyFor(source: InputSource): Boolean {
+        val run = activeRun; val catalog = activeCatalog
+        val error = when {
+            run == null && catalog == null -> null
+            run == null || catalog == null -> "请同时导入运行配置和样本清单，或退出实验模式"
+            run.source != source -> "输入来源与运行配置不一致"
+            run.sampleManifestSha256 != catalog.sha256 -> "样本清单与运行配置哈希不一致"
+            source == InputSource.RECORDING && samplePicker.selectedItemPosition == 0 -> "录音实验须先选择登记样本"
+            else -> null
+        }
+        if (error != null) display.text = error
+        return error == null
+    }
     private fun choose(type: String, code: Int) {
         if (recording || busy.get()) { display.text = "请先结束当前录音或操作"; return }
         startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             this.type = type; addCategory(Intent.CATEGORY_OPENABLE)
         }, code)
     }
-
-    private fun analyze(source: InputSource, submitted: Long, audio: () -> Audio) {
-        val address = server.text.toString()
-        val credential = token.text.toString()
-        val selected = PlanMode.valueOf(mode.selectedItem.toString())
-        val keypoints = points.text.toString().lines().map { it.trim() }.filter { it.isNotEmpty() }
-            .mapIndexed { i, text -> Keypoint("k${i + 1}", text) }
-        if (keypoints.isEmpty()) {
-            if (source == InputSource.RECORDING) worker.execute { recorder.stop() }
-            display.text = "请填写参考要点"; return
+    private fun createExport(type: String, filename: String, code: Int) {
+        if (recording || busy.get() || coordinator?.current()?.let { it.status == TaskStatus.SUCCEEDED && !it.visible } == true) {
+            display.text = "请等待当前操作及反馈展示完成"; return
         }
+        startActivityForResult(Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+            this.type = type; putExtra(Intent.EXTRA_TITLE, filename); addCategory(Intent.CATEGORY_OPENABLE)
+        }, code)
+    }
+    private fun runtimeInfo(bytes: ByteArray): ExperimentRuntime {
+        val manifest = JSONObject(bytes.toString(Charsets.UTF_8))
+        return ExperimentRuntime(deviceId, Build.MODEL, Build.VERSION.RELEASE,
+            Build.SUPPORTED_ABIS.firstOrNull { it == "arm64-v8a" } ?: Build.SUPPORTED_ABIS.first(),
+            BuildConfig.VERSION_NAME, BuildConfig.SOURCE_REVISION, ExperimentFiles.sha256(bytes),
+            manifest.getString("model_version"), manifest.getString("config_version"))
+    }
+    private fun deviceInfo(): JSONObject {
+        val info = runtimeInfo(File(filesDir, "models/manifest.json").readBytes())
+        val battery = registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+        val level = battery?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
+        val scale = battery?.getIntExtra(BatteryManager.EXTRA_SCALE, -1) ?: -1
+        val status = battery?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
+        val temperature = battery?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, Int.MIN_VALUE) ?: Int.MIN_VALUE
+        fun objectOf(vararg pairs: Pair<String, Any?>) = JSONObject().also { obj ->
+            pairs.forEach { obj.put(it.first, it.second ?: JSONObject.NULL) } }
+        return objectOf("device_info_schema_version" to 1,
+            "device" to objectOf("device_id" to info.deviceId, "model" to info.model, "android_version" to info.androidVersion,
+                "abi" to info.abi, "power_mode" to if ((getSystemService(POWER_SERVICE) as PowerManager).isPowerSaveMode) "POWER_SAVE" else "NORMAL",
+                "charging" to if (status < 0) null else (status in setOf(BatteryManager.BATTERY_STATUS_CHARGING, BatteryManager.BATTERY_STATUS_FULL)),
+                "battery_percent" to if (level >= 0 && scale > 0) level * 100.0 / scale else null,
+                "temperature_c" to if (temperature != Int.MIN_VALUE) temperature / 10.0 else null),
+            "runtime" to objectOf("apk_version" to info.apkVersion,
+                "apk_commit" to info.apkCommit.takeIf { it.matches(Regex("[0-9a-f]{40,64}")) },
+                "model_version" to info.modelVersion, "config_version" to info.configVersion,
+                "model_manifest_sha256" to info.modelManifestSha256))
+    }
+
+    private fun analyze(source: InputSource, submitted: Long, audio: () -> PreparedAudio) {
+        val address = server.text.toString(); val credential = token.text.toString()
+        val run = activeRun; val catalog = activeCatalog
+        val selection = catalog?.samples?.getOrNull(samplePicker.selectedItemPosition - 1)?.id
+        val selected = PlanMode.valueOf(mode.selectedItem.toString())
+        val manualPoints = points.text.toString().lines().map { it.trim() }.filter { it.isNotEmpty() }
+            .mapIndexed { i, text -> Keypoint("k" + (i + 1), text) }
         if (!busy.compareAndSet(false, true)) { display.text = "请等待当前操作结束"; return }
-        cancelled.set(false)
-        display.text = "分析中"
+        cancelled.set(false); timingDisplay.text = "准备输入和运行配置"; display.text = "分析中"
         worker.execute {
             try {
-                val capturedAudio = audio().also { latestAudio = it }
+                val prepStarted = System.nanoTime()
+                val captured = audio().also { latestAudio = it.audio }
+                val prepMs = (System.nanoTime() - prepStarted) / 1_000_000L
                 if (cancelled.get()) return@execute
+                require((run == null) == (catalog == null)) { "请同时导入运行配置和样本清单，或退出实验模式" }
                 val directory = File(filesDir, "models")
-                val manifest = JSONObject(File(directory, "manifest.json").readText())
-                val local = if (selected == PlanMode.REMOTE) {
-                    ModuleExecutor { throw ModuleFailure(ErrorCode.MODEL_UNAVAILABLE) }
-                } else {
-                    if (modules == null) modules = RealModules(directory)
-                    LocalExecutor(checkNotNull(modules))
-                }
-                val remote = if (selected == PlanMode.LOCAL) {
-                    ModuleExecutor { throw ModuleFailure(ErrorCode.REMOTE_UNREACHABLE) }
-                } else RemoteExecutor(address.toHttpUrl(), credential)
-                val engine = TaskCoordinator(local, remote, FileTaskJournal(File(filesDir, "tasks")),
-                    JsonlEventSink(File(filesDir, "events.jsonl")))
-                coordinator = engine
+                val info = runtimeInfo(File(directory, "manifest.json").readBytes())
+                val bound = if (run != null && catalog != null) {
+                    ExperimentFiles.bind(run, catalog, selection, source, captured.wavSha256, info).also { experiments.freeze(run, catalog) }
+                } else null
                 val remoteNodes = when (selected) {
                     PlanMode.LOCAL -> emptySet()
                     PlanMode.REMOTE -> setOf(Module.M1, Module.M2, Module.M3, Module.M4)
                     PlanMode.MANUAL_MIXED -> setOf(Module.M2, Module.M3)
                 }
-                val plan = ExecutionPlan("manual-${selected.name}", Build.MODEL.replace(Regex("[^A-Za-z0-9._-]"), "-"),
-                    manifest.getString("model_version"), manifest.getString("config_version"), selected, remoteNodes)
+                val plan = bound?.plan ?: ExecutionPlan("manual-" + selected.name, deviceId,
+                    info.modelVersion, info.configVersion, selected, remoteNodes)
+                val keypoints = bound?.sample?.keypoints ?: manualPoints
+                require(keypoints.isNotEmpty()) { "请填写参考要点" }
+                val local = if (plan.mode == PlanMode.REMOTE) ModuleExecutor { throw ModuleFailure(ErrorCode.MODEL_UNAVAILABLE) }
+                else { if (modules == null) modules = RealModules(directory); LocalExecutor(checkNotNull(modules)) }
+                val remote = if (plan.mode == PlanMode.LOCAL) ModuleExecutor { throw ModuleFailure(ErrorCode.REMOTE_UNREACHABLE) }
+                    else RemoteExecutor(address.toHttpUrl(), credential)
+                val engine = TaskCoordinator(local, remote, FileTaskJournal(File(filesDir, "tasks")), eventSink())
+                coordinator = engine
                 if (cancelled.get()) return@execute
-                val task = engine.begin(plan, source, "manual-${System.currentTimeMillis()}", "manual-input",
-                    submittedAtNanos = submitted)
+                val task = engine.begin(plan, source, bound?.runId ?: ("manual-" + UUID.randomUUID()),
+                    bound?.sample?.id ?: ("unregistered-" + UUID.randomUUID()), bound?.sample?.effective,
+                    submittedAtNanos = submitted, experiment = bound?.link)
+                if (bound != null) runOnUiThread { points.setText(keypoints.joinToString("\n") { it.text }) }
                 if (cancelled.get()) engine.cancel(task.taskId)
-                engine.run(task.taskId, keypoints, 120000) {
-                    capturedAudio.also {
-                        latestAudio = it
-                        File(filesDir, "last.wav").outputStream().use { output -> WavPcmIO.write(it, output) }
-                    }
+                engine.run(task.taskId, keypoints, 120000, priorAudioPreparationMs = prepMs) {
+                    if (run != null) ExperimentFiles.checkAudio(run, captured.audio)
+                    File(filesDir, "last.wav").outputStream().use { WavPcmIO.write(captured.audio, it) }
+                    captured.audio
                 }
-                runOnUiThread {
-                    if (coordinator !== engine) return@runOnUiThread
-                    val record = engine.current() ?: return@runOnUiThread
-                    display.text = record.feedback?.let { feedback ->
-                        feedback.transcript.fullText + "\n\n" + feedback.matches.values.joinToString("\n") {
-                            "${it.keypointId} ${if (it.covered) "已覆盖" else "可能遗漏"} ${"%.3f".format(it.score)}\n依据 ${it.evidenceText}"
-                        } + "\n执行归属 " + plan.assignments
-                    } ?: "${record.status} ${record.error ?: ""}"
-                    if (record.status == TaskStatus.SUCCEEDED) display.post {
-                        if (worker.isShutdown || isDestroyed) return@post
-                        val visible = System.nanoTime()
-                        worker.execute { engine.markFeedbackVisible(record.taskId, record.attempt, visible) }
-                    }
-                }
+                runOnUiThread { if (!isDestroyed && coordinator === engine) engine.current()?.let { showRecord(engine, it) } }
             } catch (error: Throwable) {
                 if (error is VirtualMachineError || error is ThreadDeath) throw error
-                runOnUiThread { display.text = "执行失败，请核对模型包和配置。 ${error.javaClass.simpleName}" }
+                runOnUiThread { display.text = "执行或配置校验失败：" + (error.message ?: error.javaClass.simpleName) }
             } finally { busy.set(false) }
         }
     }
@@ -179,71 +320,74 @@ class MainActivity : Activity() {
         super.onActivityResult(code, result, data)
         if (result != RESULT_OK) return
         val uri = data?.data ?: return
-        when (code) {
-            10 -> analyze(InputSource.IMPORT, System.nanoTime()) {
-                checkNotNull(contentResolver.openInputStream(uri)).use(WavPcmIO::read)
+        if (code == 10) {
+            analyze(InputSource.IMPORT, System.nanoTime()) {
+                val bytes = readBounded(checkNotNull(contentResolver.openInputStream(uri)))
+                PreparedAudio(ByteArrayInputStream(bytes).use(WavPcmIO::read), ExperimentFiles.sha256(bytes))
             }
-            11 -> {
-                if (!busy.compareAndSet(false, true)) { display.text = "请等待当前操作结束"; return }
-                worker.execute {
-                try {
-                    check(coordinator?.current()?.status !in setOf(TaskStatus.CREATED, TaskStatus.RUNNING))
-                    modules?.close(); modules = null
-                    val directory = File(filesDir, "models-staging")
-                    directory.deleteRecursively()
-                    directory.mkdirs()
-                    ZipInputStream(checkNotNull(contentResolver.openInputStream(uri))).use { zip ->
-                        var total = 0L
+            return
+        }
+        if (!busy.compareAndSet(false, true)) { display.text = "请等待当前操作结束"; return }
+        worker.execute {
+            try {
+                when (code) {
+                    11 -> importModels(checkNotNull(contentResolver.openInputStream(uri)))
+                    12 -> latestAudio?.let { audio -> checkNotNull(contentResolver.openOutputStream(uri)).use { WavPcmIO.write(audio, it) } }
+                    13 -> checkNotNull(contentResolver.openOutputStream(uri)).use { output ->
+                        val file = File(filesDir, "events.jsonl")
+                        if (file.isFile) file.inputStream().use { it.copyTo(output) }
+                    }
+                    14 -> {
+                        val run = experiments.saveRun(readBounded(checkNotNull(contentResolver.openInputStream(uri))))
+                        getSharedPreferences("experiment", MODE_PRIVATE).edit().putString("active_run", run.sha256).apply()
+                        runOnUiThread { activeRun = run; refreshExperiment() }
+                    }
+                    15 -> {
+                        val catalog = experiments.saveSamples(readBounded(checkNotNull(contentResolver.openInputStream(uri))))
+                        getSharedPreferences("experiment", MODE_PRIVATE).edit().putString("active_samples", catalog.sha256).apply()
+                        runOnUiThread { activeCatalog = catalog; refreshExperiment() }
+                    }
+                    16 -> checkNotNull(contentResolver.openOutputStream(uri)).use { it.write(deviceInfo().toString(2).toByteArray(Charsets.UTF_8)) }
+                    17 -> experiments.export(File(filesDir, "events.jsonl"), checkNotNull(contentResolver.openOutputStream(uri)))
+                }
+                runOnUiThread { display.text = "导入或导出完成" }
+            } catch (error: Exception) {
+                runOnUiThread { display.text = "操作失败：" + (error.message ?: error.javaClass.simpleName) }
+            } finally { busy.set(false) }
+        }
+    }
+    private fun importModels(input: InputStream) {
+        modules?.close(); modules = null
+        val directory = File(filesDir, "models-staging")
+        directory.deleteRecursively(); directory.mkdirs()
+        ZipInputStream(input).use { zip ->
+            var total = 0L
+            while (true) {
+                val entry = zip.nextEntry ?: break
+                val target = File(directory, entry.name).canonicalFile
+                require(target.toPath().startsWith(directory.canonicalFile.toPath()))
+                if (entry.isDirectory) target.mkdirs() else {
+                    target.parentFile?.mkdirs()
+                    target.outputStream().use { output ->
+                        val buffer = ByteArray(65536)
                         while (true) {
-                            val entry = zip.nextEntry ?: break
-                            val target = File(directory, entry.name).canonicalFile
-                            require(target.toPath().startsWith(directory.canonicalFile.toPath()))
-                            if (entry.isDirectory) target.mkdirs() else {
-                                target.parentFile?.mkdirs()
-                                target.outputStream().use { output ->
-                                    val buffer = ByteArray(65536)
-                                    while (true) {
-                                        val count = zip.read(buffer)
-                                        if (count < 0) break
-                                        total += count
-                                        require(total <= 5L * 1024 * 1024 * 1024)
-                                        output.write(buffer, 0, count)
-                                    }
-                                }
-                            }
+                            val count = zip.read(buffer)
+                            if (count < 0) break
+                            total += count; require(total <= 5L * 1024 * 1024 * 1024)
+                            output.write(buffer, 0, count)
                         }
                     }
-                    val checkManifest = JSONObject(File(directory, "manifest.json").readText())
-                    RealModules.verifyArtifacts(directory, checkManifest)
-                    val installed = File(filesDir, "models")
-                    val backup = File(filesDir, "models-backup")
-                    backup.deleteRecursively()
-                    if (installed.exists()) check(installed.renameTo(backup))
-                    if (!directory.renameTo(installed)) {
-                        backup.renameTo(installed)
-                        error("Cannot publish model directory")
-                    }
-                    backup.deleteRecursively()
-                    runOnUiThread { display.text = "模型包已导入 ${checkManifest.getString("model_version")}" }
-                } catch (error: Exception) {
-                    runOnUiThread { display.text = "模型导入失败 ${error.javaClass.simpleName}" }
-                } finally { busy.set(false) }
-                }
-            }
-            12 -> worker.execute {
-                latestAudio?.let { audio ->
-                    checkNotNull(contentResolver.openOutputStream(uri)).use { WavPcmIO.write(audio, it) }
-                }
-            }
-            13 -> worker.execute {
-                val file = File(filesDir, "events.jsonl")
-                if (file.isFile) checkNotNull(contentResolver.openOutputStream(uri)).use { output ->
-                    file.inputStream().use { it.copyTo(output) }
                 }
             }
         }
+        val manifest = JSONObject(File(directory, "manifest.json").readText(Charsets.UTF_8))
+        RealModules.verifyArtifacts(directory, manifest)
+        val installed = File(filesDir, "models"); val backup = File(filesDir, "models-backup")
+        backup.deleteRecursively()
+        if (installed.exists()) check(installed.renameTo(backup))
+        if (!directory.renameTo(installed)) { backup.renameTo(installed); error("Cannot publish models") }
+        backup.deleteRecursively()
     }
-
     override fun onDestroy() {
         cancelled.set(true)
         coordinator?.current()?.let { coordinator?.cancel(it.taskId) }

@@ -17,3 +17,6 @@
 
 
 无需手机的电脑端入口：experiments/scripts/analyze_desktop.py。电脑启动/内存测量、真实服务异常用例和固定回归样例见 [电脑验证说明](docs/desktop-validation.md)。手机与人工录音验证按用户安排后续执行。
+
+
+APK 0.2.0 的节点计时面板、运行配置/样本自动关联及完整记录导出见 [实验操作说明](docs/experiment-workflow.md)。正式采集前先导出设备信息并用 mobile_experiment.py 生成配置。

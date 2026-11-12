@@ -1,11 +1,13 @@
 package com.example.interviewfeedback.transport
 
 import com.example.interviewfeedback.application.*
+import com.example.interviewfeedback.application.Module
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import org.json.JSONObject
+import org.json.JSONArray
 
 /** Construct once per app process using an app-private directory. */
 class FileTaskJournal(private val directory: File) : TaskJournal {
@@ -19,6 +21,9 @@ class FileTaskJournal(private val directory: File) : TaskJournal {
             "run_id" to record.runId, "sample_id" to record.sampleId, "submitted_at_ms" to record.submittedAtMs,
             "error_code" to record.error?.name, "visible" to record.visible,
             "effective_input" to record.effectiveInput, "audio_samples" to record.audioSamples,
+            "measurements" to JSONArray(record.measurements.map { measurementJson(it) }),
+            "total_elapsed_ms" to record.totalElapsedMs, "feedback_elapsed_ms" to record.feedbackElapsedMs,
+            "experiment" to record.experiment?.let(ExperimentFiles::link),
             "feedback" to record.feedback?.let {
                 json("transcript" to WireJson.transcript(it.transcript), "matches" to WireJson.matches(it.matches))
             })
@@ -69,6 +74,10 @@ class FileTaskJournal(private val directory: File) : TaskJournal {
         visible = data.getBoolean("visible"),
         effectiveInput = if (data.isNull("effective_input")) null else data.getBoolean("effective_input"),
         audioSamples = if (data.isNull("audio_samples")) null else data.getInt("audio_samples"),
+        measurements = data.optJSONArray("measurements")?.read(::readMeasurement) ?: emptyList(),
+        totalElapsedMs = if (data.isNull("total_elapsed_ms")) null else data.getLong("total_elapsed_ms"),
+        feedbackElapsedMs = if (data.isNull("feedback_elapsed_ms")) null else data.getLong("feedback_elapsed_ms"),
+        experiment = data.optJSONObject("experiment")?.let(ExperimentFiles::readLink),
     )
 }
 
@@ -89,7 +98,22 @@ class JsonlEventSink(private val file: File) : EventSink {
             "error_code" to event.error?.name, "elapsed_ms" to timing?.elapsedMs,
             "module_time_known" to timing?.moduleTimeKnown, "round_trip_ms" to timing?.roundTripMs,
             "serialize_ms" to timing?.encodeMs, "deserialize_ms" to timing?.decodeMs,
+            "experiment" to task.experiment?.let(ExperimentFiles::link),
             "bytes_up" to (timing?.bytesUp ?: 0L), "bytes_down" to (timing?.bytesDown ?: 0L))
         file.appendText(data.toString() + "\n", Charsets.UTF_8)
     }
 }
+
+private fun measurementJson(value: ModuleMeasurement): JSONObject = value.timing.let {
+    json("module_id" to value.module.name, "executor" to value.executor.name, "status" to value.status,
+        "error_code" to value.error?.name, "elapsed_ms" to it.elapsedMs, "bytes_up" to it.bytesUp,
+        "bytes_down" to it.bytesDown, "round_trip_ms" to it.roundTripMs, "serialize_ms" to it.encodeMs,
+        "deserialize_ms" to it.decodeMs, "module_time_known" to it.moduleTimeKnown)
+}
+private fun readMeasurement(data: JSONObject) = ModuleMeasurement(Module.valueOf(data.getString("module_id")),
+    Executor.valueOf(data.getString("executor")), data.getString("status"), Timing(data.getLong("elapsed_ms"),
+        data.getLong("bytes_up"), data.getLong("bytes_down"),
+        if (data.isNull("round_trip_ms")) null else data.getLong("round_trip_ms"),
+        if (data.isNull("serialize_ms")) null else data.getLong("serialize_ms"),
+        if (data.isNull("deserialize_ms")) null else data.getLong("deserialize_ms"), data.getBoolean("module_time_known")),
+    if (data.isNull("error_code")) null else ErrorCode.valueOf(data.getString("error_code")))
