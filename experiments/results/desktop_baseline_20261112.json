@@ -1,0 +1,75 @@
+{
+  "condition": "DESKTOP_LOCAL_INPUT_NOT_HUMAN_REVIEWED",
+  "formal_evaluation": false,
+  "model_version": "modelset-e8f8c211226b-066409f3d9db-9ba59cbaae79",
+  "config_version": "rules-v1",
+  "source_wav": "pwq_desktop_baseline.wav",
+  "reference_keypoints": [
+    {
+      "keypoint_id": "k1",
+      "text": "调查居民需求"
+    },
+    {
+      "keypoint_id": "k2",
+      "text": "组织分层反诈宣传"
+    },
+    {
+      "keypoint_id": "k3",
+      "text": "回访评估宣传效果"
+    }
+  ],
+  "model_load_ms": 21795.226799993543,
+  "inference_ms": 1629.3637000053423,
+  "module_ms": {
+    "M1": 43.17889999947511,
+    "M2": 1547.7086999962921,
+    "M3": 37.285799997334834,
+    "M4": 1.175800003693439
+  },
+  "transcript": {
+    "full_text": "调查居民需求\n组织分层反诈宣传\n回访评估宣传效果",
+    "segments": [
+      {
+        "segment_id": "seg1",
+        "start_sample": 2080,
+        "end_sample": 27104,
+        "text": "调查居民需求"
+      },
+      {
+        "segment_id": "seg2",
+        "start_sample": 39968,
+        "end_sample": 73184,
+        "text": "组织分层反诈宣传"
+      },
+      {
+        "segment_id": "seg3",
+        "start_sample": 86560,
+        "end_sample": 120288,
+        "text": "回访评估宣传效果"
+      }
+    ]
+  },
+  "matches": [
+    {
+      "keypoint_id": "k1",
+      "score": 0.9999999999999998,
+      "covered": true,
+      "evidence_sentence_id": "s1",
+      "evidence_text": "调查居民需求"
+    },
+    {
+      "keypoint_id": "k2",
+      "score": 1.0,
+      "covered": true,
+      "evidence_sentence_id": "s2",
+      "evidence_text": "组织分层反诈宣传"
+    },
+    {
+      "keypoint_id": "k3",
+      "score": 1.0,
+      "covered": true,
+      "evidence_sentence_id": "s3",
+      "evidence_text": "回访评估宣传效果"
+    }
+  ]
+}

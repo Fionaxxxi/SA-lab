@@ -1,3 +1,33 @@
 # Android 客户端
 
-S0 建立 Gradle 工程并确认最终包名。当前 `com.example.interviewfeedback` 为目录占位。刘慧芳负责录音、VAD、界面、存储、状态监测和双机验收。彭雯青负责 ASR 和语义模块。林俊希负责任务协调、执行路由和网络接口。Gradle、Manifest 和可安装构建由 S0 验证后纳入。
+## 当前状态（2026-11-12）
+
+Gradle 工程已提交，S1 的本地链路代码已实现：录音与 WAV 导入导出、Silero VAD、Vosk 中文识别、SentencePiece 分词 + ONNX 语义编码、要点匹配、反馈页、任务协调与取消。
+
+**已实现 ≠ 已验收。** 真机两机复跑、异常路径签收与 S2 基线数据仍未完成，证据状态见仓库根目录 `docs/desktop-validation.md` 与 `docs/team-s0-s3.md`。
+
+## 模块与目录
+
+实现期把 M1–M4 合并在 `analysis/semantic/RealModules.kt` 一个类里（共用一套模型目录与配置），`analysis/asr/`、`analysis/vad/` 保留为空目录。设计单元与代码落点的完整对照见 `docs/module-mapping.md`。
+
+| 包 | 职责 |
+|---|---|
+| `capture/` | M0：录音、WAV 编解码、最近一次录音恢复 |
+| `analysis/semantic/` | M1–M4：VAD、ASR、语义编码、要点匹配；`SentencePiece.kt` + `cpp/tokenizer.cpp` 为分词 JNI |
+| `application/` | 执行计划（LOCAL / REMOTE / MANUAL_MIXED）、任务协调、节点计时 |
+| `transport/` | HTTP v1 远程调用、任务日志、实验事件导出 |
+| `ui/` | 录音页与反馈页 |
+
+## 构建
+
+- Gradle Wrapper 已随仓库提交（`gradlew` / `gradlew.bat`，固定 Gradle 8.2），无需本机预装 Gradle。
+- 需要：JDK 17、Android SDK（compileSdk 34）、**NDK 26.1.10909125**、**CMake 3.22.1**。后两者用于编译 `cpp/tokenizer.cpp`；缺失时 `externalNativeBuild` 会失败。
+- 命令：`cd mobile && ./gradlew :app:assembleDebug`（Windows 用 `gradlew.bat`）。
+
+## 包名
+
+`com.example.interviewfeedback` 仍为占位，定稿方案与影响面见 `docs/package-name-decision.md`，待三人确认后统一替换。
+
+## 模型
+
+模型权重不入库，由 `models/prepare_models.py` 按 `models/manifest.json` 的固定提交下载并逐文件校验 SHA256。缺少 `semantic.onnx`、`silero_vad.onnx` 或 `sentencepiece.bpe.model` 时，对应模块在加载期即报 `MODEL_UNAVAILABLE`。
