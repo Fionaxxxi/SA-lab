@@ -106,10 +106,8 @@ class MobileScreen(private val host: Activity, private val action: (String) -> U
     init {
         host.window.statusBarColor = canvas; host.window.navigationBarColor = canvas
         host.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-        page.put(text("VOICE / 语音练习", 11f, teal, true))
-        page.put(text("让每次回答\n都有清晰反馈", 28f, ink, true), 8)
+        page.put(text("开始一次回答", 26f, ink, true))
         page.put(text("录下回答，查看转写与参考要点的覆盖情况。", 13f, muted), 8)
-        page.put(status, 18)
         val capture = card(page)
         capture.put(text("01  录下你的回答", 18f, ink, true))
         capture.put(text("先确认下方参考要点，再开始录音。", 13f, muted), 6)
@@ -157,7 +155,15 @@ class MobileScreen(private val host: Activity, private val action: (String) -> U
         details.put(timings, 8)
         page.put(text("语音回答反馈  ·  v" + com.example.interviewfeedback.BuildConfig.VERSION_NAME, 11f, muted), 22)
         scroll = ScrollView(host).apply { isFillViewport = true; setBackgroundColor(canvas); addView(page) }
-        host.setContentView(scroll)
+        val shell = column().apply { setBackgroundColor(canvas) }
+        val header = column().apply {
+            setPadding(dp(18), dp(14), dp(18), dp(10))
+            put(text("语音回答反馈", 18f, ink, true))
+            put(status, 10)
+        }
+        shell.put(header)
+        shell.addView(scroll, LinearLayout.LayoutParams(-1, 0, 1f))
+        host.setContentView(shell)
     }
     fun setRecording(value: Boolean) {
         recording = value; handler.removeCallbacks(pulse)
