@@ -1,0 +1,20 @@
+{
+  "device_info_schema_version": 1,
+  "device": {
+    "device_id": "android-564b48fb-7328-4b28-ab4e-c2fc23e337fe",
+    "model": "23127PN0CC",
+    "android_version": "15",
+    "abi": "arm64-v8a",
+    "power_mode": "POWER_SAVE",
+    "charging": false,
+    "battery_percent": 72,
+    "temperature_c": 33.4
+  },
+  "runtime": {
+    "apk_version": "0.2.0",
+    "apk_commit": "3ae57e954bd37c1c4fdc1e86a87f08dcaee279ae",
+    "model_version": "modelset-e8f8c211226b-066409f3d9db-9ba59cbaae79",
+    "config_version": "rules-v1",
+    "model_manifest_sha256": "3c908bb523a80c30b2648cb9b08b4869d6b300ae54f3437455e1a8bb0f13fcf0"
+  }
+}
