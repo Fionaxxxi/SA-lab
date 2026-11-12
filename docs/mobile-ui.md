@@ -7,3 +7,5 @@
 不增加 UI 框架或运行依赖，使用系统原生控件、dp 间距、sp 字号与可换行卡片。按钮最小高度 50dp，覆盖状态同时用文字和颜色表达，转写可复制。新增同色主题与麦克风启动图标。
 
 包名及签名保持不变，versionCode 4、versionName 0.3.0，可以覆盖安装，保留模型、last.wav 与日志。编译、签名与静态检查见 .evidence/mobile-ui；没有可用模拟器或已连接手机，尚未宣称真机布局与交互验收通过。
+
+静态检查保留 minSdk 26 的 API 兼容性检查，移除误放在基础主题中的 API 27 属性。项目仍沿用原 targetSdk 31，按课程侧载 APK 场景仅排除 Google Play 上架目标版本门槛 ExpiredTargetSdkVersion；没有关闭其他检查，也没有改动 Android 权限或目标版本行为。
