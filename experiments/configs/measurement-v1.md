@@ -22,4 +22,4 @@
 | 远程调用 | `module_id, bytes_up, bytes_down, round_trip_ms, serialize_ms, deserialize_ms` | 每次调用记录正文字节和持续时间。往返减服务器执行仅作综合开销代理，无法拆出单向时延。 |
 | 数据边 | `from_module, to_module, artifact_type, producer_download_bytes, consumer_upload_bytes, network_profile_id, overhead_owner` | S4 由相邻模块和真实 HTTP 正文追溯。连续远程仍由手机中转，分别登记前节点回传和后节点重传。题目元数据等附加载荷显式归属，避免重复记账。 |
 
-彭雯青的统计脚本和两机原始日志尚未取得。以上为待对列的 v1 字段，S2-T2 应由统计脚本导入同一组成功、失败、取消和重复样例后签收。
+本分支已提供统计工具和登记实验关联。APK 0.2.0 导入配置/样本后自动写入身份、有效输入分类与哈希；完整 ZIP 可由 mobile_experiment.py validate 核对。成功、失败、取消、中断的 fixture 已跨 Kotlin/Python 验证；实际两机原始日志、人工复算及 S2-T2 签收仍待完成。
