@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="desktop-key" content="__DESKTOP_KEY__"><title>语答 · 语音回答分析</title><link rel="stylesheet" href="/assets/app.css"><script src="/assets/app.js" defer></script></head>
+<body><header class="top"><a class="brand" href="/" aria-label="语答首页"><span class="brandmark">语</span><b>语答<span>语音回答分析</span></b></a><span class="local"><i></i> 本机运行 · 音频留在这台电脑</span></header>
+<main><section class="intro"><div><p class="eyebrow">VOICE ANSWER WORKSPACE</p><h1>听见回答，<span>看清要点。</span></h1><p>导入一段语音，对照参考要点，查看转写、覆盖情况与原文证据。</p></div><div class="modelpill"><i id="modelDot"></i><div><b id="modelStatus">正在连接本地服务</b><small id="modelHint">首次分析会加载模型，后续任务自动复用</small></div></div></section>
+<div class="workspace"><section class="panel input-panel"><div class="sectionhead"><span class="number">01</span><div><h2>准备你的回答</h2><p>音频与参考要点，构成一次分析。</p></div></div>
+<label class="drop" id="drop"><input type="file" id="audioFile" accept=".wav,audio/wav"><span class="uploadicon">↥</span><strong id="fileLabel">点击选择，或将 WAV 拖到这里</strong><span id="fileInfo">16 kHz · 单声道 · 16 位 PCM · 最长 60 秒</span><span class="filebutton">选择音频文件</span></label><audio id="audioPreview" controls hidden></audio>
+<button type="button" id="sampleButton" class="textbutton">没有音频？试试合成语音示例 →</button><p id="sampleNote" class="note" hidden>当前是系统合成语音，仅用于体验和诊断，不计入真实录音验收。</p>
+<div class="fieldhead"><label for="keypoints">参考要点</label><span id="pointCount">3 个要点</span></div><textarea id="keypoints" rows="5" maxlength="30000" spellcheck="false" placeholder="每行输入一个参考要点">调查居民需求
+组织分层反诈宣传
+回访评估宣传效果</textarea><p class="helper">每行一个要点，可按你的题目修改。判断结果需结合原文复核。</p>
+<div class="actions"><button id="startButton" class="primary" type="button">开始分析 <span>→</span></button><button id="cancelButton" class="secondary" type="button" hidden>取消任务</button></div><p id="message" role="status" aria-live="polite"></p>
+</section>
+<section class="panel output-panel"><div class="sectionhead"><span class="number">02</span><div><h2>查看分析结果</h2><p>从完整转写，到每个要点的证据。</p></div><span class="statusbadge" id="jobBadge">等待开始</span></div>
+<div id="emptyState" class="empty"><div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><h3>你的回答，将在这里展开</h3><p>左侧选择音频，再点击“开始分析”。<br>首次模型加载约一分钟，进度会持续更新。</p><div class="emptytags"><span>语音转写</span><span>要点覆盖</span><span>证据定位</span></div></div>
+<div id="progressSection" hidden><div class="progresshead"><strong id="progressText">准备中</strong><span id="elapsed">00:00</span></div><div class="progressbar"><div id="progressFill"></div></div><ol class="steps"><li data-step="M1">语音检测</li><li data-step="M2">文字转写</li><li data-step="M3">语义理解</li><li data-step="M4">要点匹配</li></ol></div>
+<div id="resultSection" hidden><div class="resultstats"><div><b id="coveredCount">—</b><span>已覆盖要点</span></div><div><b id="audioDuration">—</b><span>音频时长</span></div><div><b id="analysisTime">—</b><span>分析耗时</span></div></div><div id="resultNotice" class="note"></div>
+<div class="resulttitle"><h3>回答转写</h3><button id="copyButton" class="textbutton" type="button">复制文字</button></div><div id="transcript" class="transcript"></div><div class="resulttitle"><h3>要点与证据</h3><span class="helper">分数为余弦相似度</span></div><div id="matches"></div>
+<details class="timing"><summary>节点耗时与版本信息</summary><div id="timings"></div><p id="versions"></p></details><div class="downloads"><button id="downloadMd" class="secondary">下载结果 Markdown</button><button id="downloadJson" class="secondary">下载原始 JSON</button></div></div>
+</section></div>
+<section class="panel history"><div class="historyhead"><h2>本次会话的任务</h2><span>完成后可重新打开结果</span></div><div id="historyList"><p class="helper">还没有分析任务。</p></div></section>
+<footer><span>语答 · 软件架构课程项目</span><span>本地模型分析结果仅供辅助复核，实际质量以人工标注评价为准。</span></footer></main></body></html>
