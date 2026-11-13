@@ -1,0 +1,1337 @@
+[
+  {
+    "sample_id": "S01",
+    "topic_id": "T01",
+    "speaker_id": "",
+    "split": "calibration",
+    "wav_path": "local/S01.wav",
+    "sha256": "c20bef21a864bb559bb8b8c12a3691c7d7828e03f9feff5807f14d45c310fb14",
+    "effective_input": null,
+    "reference_text": "我先问居民最常遇到哪些骗局，再请社区工作人员按老年人和年轻人分别讲真实案例。现场提醒不要泄露验证码，转账前要核实身份。结束后收集意见，回访重点居民。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "了解居民需求和常见骗局",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "我先问居民最常遇到哪些骗局",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "联合社区分人群开展案例宣传",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "再请社区工作人员按老年人和年轻人分别讲真实案例",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "提醒保护验证码并谨慎转账",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "现场提醒不要泄露验证码，转账前要核实身份",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "活动后收集反馈并回访",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "结束后收集意见，回访重点居民",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13",
+    "coverage_review_provenance": "AI_TEXT_REVIEW_OF_USER_ATTESTED_SCRIPT_NOT_AUDIO_OR_SECOND_HUMAN_REVIEW_2026-11-13"
+  },
+  {
+    "sample_id": "S02",
+    "topic_id": "T01",
+    "speaker_id": "",
+    "split": "calibration",
+    "wav_path": "local/S02.wav",
+    "sha256": "581bd64e266bff3425c92fa494abf3fdd616da59e8ad310ffe7b6b092267e71f",
+    "effective_input": null,
+    "reference_text": "先了解居民常遇到的诈骗，再联合社区开讲座，给老人展示冒充客服的案例。提醒大家不要把验证码告诉别人，也不要轻易转账。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "了解居民需求和常见骗局",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "先了解居民常遇到的诈骗",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "联合社区分人群开展案例宣传",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "再联合社区开讲座，给老人展示冒充客服的案例",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "提醒保护验证码并谨慎转账",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "提醒大家不要把验证码告诉别人，也不要轻易转账",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "活动后收集反馈并回访",
+        "expected_covered": false,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "",
+        "script_review_reason": "没有活动后的反馈与回访。"
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13",
+    "coverage_review_provenance": "AI_TEXT_REVIEW_OF_USER_ATTESTED_SCRIPT_NOT_AUDIO_OR_SECOND_HUMAN_REVIEW_2026-11-13"
+  },
+  {
+    "sample_id": "S03",
+    "topic_id": "T01",
+    "speaker_id": "",
+    "split": "calibration",
+    "wav_path": "local/S03.wav",
+    "sha256": "099f79de1dfe0b1ee31eaee349dfc9818d391d6fe07b2954154d213116ee4ca1",
+    "effective_input": null,
+    "reference_text": "我会先摸清居民被骗的常见情形，告诉大家短信验证码不能交给陌生人，汇款之前应电话核实。之后问问居民是否听懂，再去看看高风险住户。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "了解居民需求和常见骗局",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "我会先摸清居民被骗的常见情形",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "联合社区分人群开展案例宣传",
+        "expected_covered": false,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "",
+        "script_review_reason": "仅提个人提醒，未联合社区分人群组织案例宣传。"
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "提醒保护验证码并谨慎转账",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "告诉大家短信验证码不能交给陌生人，汇款之前应电话核实",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "活动后收集反馈并回访",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "之后问问居民是否听懂，再去看看高风险住户",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13",
+    "coverage_review_provenance": "AI_TEXT_REVIEW_OF_USER_ATTESTED_SCRIPT_NOT_AUDIO_OR_SECOND_HUMAN_REVIEW_2026-11-13"
+  },
+  {
+    "sample_id": "S04",
+    "topic_id": "T01",
+    "speaker_id": "",
+    "split": "calibration",
+    "wav_path": "local/S04.wav",
+    "sha256": "d2ee34744a617980ba306b7cc4dbf50aa53322f3ea6142b9c762fd8755d3e547",
+    "effective_input": null,
+    "reference_text": "我觉得社区活动可以安排唱歌和运动，布置好场地，准备礼物，让大家玩得开心。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "了解居民需求和常见骗局",
+        "expected_covered": false,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "",
+        "script_review_reason": "回答离题，没有该要点的行动。"
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "联合社区分人群开展案例宣传",
+        "expected_covered": false,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "",
+        "script_review_reason": "回答离题，没有该要点的行动。"
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "提醒保护验证码并谨慎转账",
+        "expected_covered": false,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "",
+        "script_review_reason": "回答离题，没有该要点的行动。"
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "活动后收集反馈并回访",
+        "expected_covered": false,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "",
+        "script_review_reason": "回答离题，没有该要点的行动。"
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13",
+    "coverage_review_provenance": "AI_TEXT_REVIEW_OF_USER_ATTESTED_SCRIPT_NOT_AUDIO_OR_SECOND_HUMAN_REVIEW_2026-11-13"
+  },
+  {
+    "sample_id": "S05",
+    "topic_id": "T01",
+    "speaker_id": "",
+    "split": "calibration",
+    "wav_path": "local/S05.wav",
+    "sha256": "7707f71232875067ac4f8b3d3f3379c2e68bba63209605f095a4746fa1654f26",
+    "effective_input": null,
+    "reference_text": "我会先调查骗局，再和社区办案例宣传。不过我不打算提醒居民保护验证码，也不准备讲转账核实。活动结束就散场，不做反馈和回访。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "了解居民需求和常见骗局",
+        "expected_covered": false,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "",
+        "script_review_reason": "仅说调查骗局，未明确调查居民需求；完整要点不成立。"
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "联合社区分人群开展案例宣传",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "再和社区办案例宣传",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "提醒保护验证码并谨慎转账",
+        "expected_covered": false,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "",
+        "script_review_reason": "明确否定验证码与转账提醒。"
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "活动后收集反馈并回访",
+        "expected_covered": false,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "",
+        "script_review_reason": "明确否定反馈和回访。"
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13",
+    "coverage_review_provenance": "AI_TEXT_REVIEW_OF_USER_ATTESTED_SCRIPT_NOT_AUDIO_OR_SECOND_HUMAN_REVIEW_2026-11-13"
+  },
+  {
+    "sample_id": "S06",
+    "topic_id": "T02",
+    "speaker_id": "",
+    "split": "calibration",
+    "wav_path": "local/S06.wav",
+    "sha256": "fcc2bcee2b7d7287f482de59f7795c72ef64c053ab043f3d563d95816f8fd160",
+    "effective_input": null,
+    "reference_text": "我先列出独居老人和容易中暑的住户，联系网格员逐户敲门提醒，送上饮水并协调避暑点。身体不适时帮助就医，之后继续回访，有紧急情况立即处置。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "排查独居老人和高风险住户",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "我先列出独居老人和容易中暑的住户",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "联合网格员上门联系与提醒",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "联系网格员逐户敲门提醒",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "提供饮水、避暑或就医协助",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "送上饮水并协调避暑点。身体不适时帮助就医",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "跟踪回访并处理突发情况",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "之后继续回访，有紧急情况立即处置",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13",
+    "coverage_review_provenance": "AI_TEXT_REVIEW_OF_USER_ATTESTED_SCRIPT_NOT_AUDIO_OR_SECOND_HUMAN_REVIEW_2026-11-13"
+  },
+  {
+    "sample_id": "S07",
+    "topic_id": "T02",
+    "speaker_id": "",
+    "split": "calibration",
+    "wav_path": "local/S07.wav",
+    "sha256": "f973580432cc6baf8640e0eb1389cc254db03a5e61e12987f86aab695c231467",
+    "effective_input": null,
+    "reference_text": "先排查独居老人，和网格员一起上门问候，提醒减少高温时段外出。接下来每天回访，发现紧急情况就联系应急人员。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "排查独居老人和高风险住户",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "先排查独居老人",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "联合网格员上门联系与提醒",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "和网格员一起上门问候，提醒减少高温时段外出",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "提供饮水、避暑或就医协助",
+        "expected_covered": false,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "",
+        "script_review_reason": "没有饮水、避暑或就医协助。"
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "跟踪回访并处理突发情况",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "接下来每天回访，发现紧急情况就联系应急人员",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13",
+    "coverage_review_provenance": "AI_TEXT_REVIEW_OF_USER_ATTESTED_SCRIPT_NOT_AUDIO_OR_SECOND_HUMAN_REVIEW_2026-11-13"
+  },
+  {
+    "sample_id": "S08",
+    "topic_id": "T02",
+    "speaker_id": "",
+    "split": "calibration",
+    "wav_path": "local/S08.wav",
+    "sha256": "8def1a43da8f89a66eb75b65871a330878de44660b0da0d6045a027fa1317b82",
+    "effective_input": null,
+    "reference_text": "我让社区志愿者挨家挨户联系老人，安排清凉房间和水，必要时送医。过两天再打电话问身体情况，遇到突发情况及时处理。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "排查独居老人和高风险住户",
+        "expected_covered": false,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "",
+        "script_review_reason": "没有排查独居老人及高风险住户。"
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "联合网格员上门联系与提醒",
+        "expected_covered": false,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "",
+        "script_review_reason": "志愿者挨家联系老人，但未说明联合网格员，也未明确高温提醒。"
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "提供饮水、避暑或就医协助",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "安排清凉房间和水，必要时送医",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "跟踪回访并处理突发情况",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "过两天再打电话问身体情况，遇到突发情况及时处理",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13",
+    "coverage_review_provenance": "AI_TEXT_REVIEW_OF_USER_ATTESTED_SCRIPT_NOT_AUDIO_OR_SECOND_HUMAN_REVIEW_2026-11-13"
+  },
+  {
+    "sample_id": "S09",
+    "topic_id": "T02",
+    "speaker_id": "",
+    "split": "calibration",
+    "wav_path": "local/S09.wav",
+    "sha256": "7961ce24e1cdb27663c1d6ce74eb5930241f023d671898a2d8f1527e5bb403cf",
+    "effective_input": null,
+    "reference_text": "高温时我会调整自己下班后的运动时间，买一些冰饮料，尽量待在家里。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "排查独居老人和高风险住户",
+        "expected_covered": false,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "",
+        "script_review_reason": "回答自己的避暑安排，没有社区老人关怀行动。"
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "联合网格员上门联系与提醒",
+        "expected_covered": false,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "",
+        "script_review_reason": "回答自己的避暑安排，没有社区老人关怀行动。"
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "提供饮水、避暑或就医协助",
+        "expected_covered": false,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "",
+        "script_review_reason": "回答自己的避暑安排，没有社区老人关怀行动。"
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "跟踪回访并处理突发情况",
+        "expected_covered": false,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "",
+        "script_review_reason": "回答自己的避暑安排，没有社区老人关怀行动。"
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13",
+    "coverage_review_provenance": "AI_TEXT_REVIEW_OF_USER_ATTESTED_SCRIPT_NOT_AUDIO_OR_SECOND_HUMAN_REVIEW_2026-11-13"
+  },
+  {
+    "sample_id": "S10",
+    "topic_id": "T02",
+    "speaker_id": "",
+    "split": "calibration",
+    "wav_path": "local/S10.wav",
+    "sha256": "e8187247145567f7a69378fff09971e3ba5ad9f5b2751d3daf99cb59abb4ebe1",
+    "effective_input": null,
+    "reference_text": "先找出独居老人并请网格员上门，但我认为无需提供避暑和就医帮助，也不会做后续回访；只发一次通知就够了。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "排查独居老人和高风险住户",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "先找出独居老人",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "联合网格员上门联系与提醒",
+        "expected_covered": false,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "",
+        "script_review_reason": "只请网格员上门，未明确联系老人或作高温提醒。"
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "提供饮水、避暑或就医协助",
+        "expected_covered": false,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "",
+        "script_review_reason": "明确否定避暑与就医帮助。"
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "跟踪回访并处理突发情况",
+        "expected_covered": false,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "",
+        "script_review_reason": "明确否定后续回访。"
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13",
+    "coverage_review_provenance": "AI_TEXT_REVIEW_OF_USER_ATTESTED_SCRIPT_NOT_AUDIO_OR_SECOND_HUMAN_REVIEW_2026-11-13"
+  },
+  {
+    "sample_id": "S11",
+    "topic_id": "T03",
+    "speaker_id": "",
+    "split": "calibration",
+    "wav_path": "local/S11.wav",
+    "sha256": "5327d5e147db383a78bb6332e2b01d11c8a7e0611f24aaf71c3270a673b81a05",
+    "effective_input": null,
+    "reference_text": "我先问居民分类难在哪里，再在桶点做讲解和投放示范，调整桶的位置和清运时间。每天记录投错的种类，过一段时间向居民反馈改进效果。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "查明投放困难及居民意见",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "我先问居民分类难在哪里",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "做分类讲解和现场示范",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "再在桶点做讲解和投放示范",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "优化桶点与清运安排",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "调整桶的位置和清运时间",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "记录错误并反馈改进效果",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "每天记录投错的种类，过一段时间向居民反馈改进效果",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13",
+    "coverage_review_provenance": "AI_TEXT_REVIEW_OF_USER_ATTESTED_SCRIPT_NOT_AUDIO_OR_SECOND_HUMAN_REVIEW_2026-11-13"
+  },
+  {
+    "sample_id": "S12",
+    "topic_id": "T03",
+    "speaker_id": "",
+    "split": "calibration",
+    "wav_path": "local/S12.wav",
+    "sha256": "d0c25013a39c168dcdc5bf250335205e58c2ac2abf6d999fc95cea819ec38087",
+    "effective_input": null,
+    "reference_text": "先调查居民对垃圾分类的意见，组织志愿者现场示范哪些垃圾进哪个桶。之后记录错误投放并公布改善情况。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "查明投放困难及居民意见",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "先调查居民对垃圾分类的意见",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "做分类讲解和现场示范",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "组织志愿者现场示范哪些垃圾进哪个桶",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "优化桶点与清运安排",
+        "expected_covered": false,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "",
+        "script_review_reason": "没有优化桶点或清运安排。"
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "记录错误并反馈改进效果",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "之后记录错误投放并公布改善情况",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13",
+    "coverage_review_provenance": "AI_TEXT_REVIEW_OF_USER_ATTESTED_SCRIPT_NOT_AUDIO_OR_SECOND_HUMAN_REVIEW_2026-11-13"
+  },
+  {
+    "sample_id": "S13",
+    "topic_id": "T03",
+    "speaker_id": "",
+    "split": "calibration",
+    "wav_path": "local/S13.wav",
+    "sha256": "9116bd7046b1c79a9976ef01c52b68d25a27db7fa8a72507e3fc71a276469d9d",
+    "effective_input": null,
+    "reference_text": "我会收集大家投放不便的原因，把收集点移到更方便的位置，并和清运人员协调时间。每周看一次错投记录，再据此调整。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "查明投放困难及居民意见",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "我会收集大家投放不便的原因",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "做分类讲解和现场示范",
+        "expected_covered": false,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "",
+        "script_review_reason": "没有分类讲解或现场示范。"
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "优化桶点与清运安排",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "把收集点移到更方便的位置，并和清运人员协调时间",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "记录错误并反馈改进效果",
+        "expected_covered": false,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "",
+        "script_review_reason": "查看错投记录并调整，但未向居民反馈改进效果。"
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13",
+    "coverage_review_provenance": "AI_TEXT_REVIEW_OF_USER_ATTESTED_SCRIPT_NOT_AUDIO_OR_SECOND_HUMAN_REVIEW_2026-11-13"
+  },
+  {
+    "sample_id": "S14",
+    "topic_id": "T03",
+    "speaker_id": "",
+    "split": "calibration",
+    "wav_path": "local/S14.wav",
+    "sha256": "3425e1568a78ad0e2c2b8d56de814fc25b9d13806eb9f1627bdae8d77520524b",
+    "effective_input": null,
+    "reference_text": "我会把社区花坛重新栽种，增加休息椅，改善居民的散步环境。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "查明投放困难及居民意见",
+        "expected_covered": false,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "",
+        "script_review_reason": "回答社区绿化与休憩设施，没有垃圾分类行动。"
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "做分类讲解和现场示范",
+        "expected_covered": false,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "",
+        "script_review_reason": "回答社区绿化与休憩设施，没有垃圾分类行动。"
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "优化桶点与清运安排",
+        "expected_covered": false,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "",
+        "script_review_reason": "回答社区绿化与休憩设施，没有垃圾分类行动。"
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "记录错误并反馈改进效果",
+        "expected_covered": false,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "",
+        "script_review_reason": "回答社区绿化与休憩设施，没有垃圾分类行动。"
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13",
+    "coverage_review_provenance": "AI_TEXT_REVIEW_OF_USER_ATTESTED_SCRIPT_NOT_AUDIO_OR_SECOND_HUMAN_REVIEW_2026-11-13"
+  },
+  {
+    "sample_id": "S15",
+    "topic_id": "T03",
+    "speaker_id": "",
+    "split": "calibration",
+    "wav_path": "local/S15.wav",
+    "sha256": "490fe1fce41c7f3d3305709946ec5c0b8baee78d4235fbe8c1da3bf24511de42",
+    "effective_input": null,
+    "reference_text": "我先听居民意见并安排分类讲解，但不会调整桶点和清运；也不用记录错误投放，宣传完就算完成。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "查明投放困难及居民意见",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "我先听居民意见",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "做分类讲解和现场示范",
+        "expected_covered": true,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "并安排分类讲解",
+        "script_review_reason": "引文直接支持该要点；按引导稿原文判定。"
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "优化桶点与清运安排",
+        "expected_covered": false,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "",
+        "script_review_reason": "明确否定调整桶点和清运。"
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "记录错误并反馈改进效果",
+        "expected_covered": false,
+        "accepted_evidence_sentence_ids": [],
+        "script_evidence_quote": "",
+        "script_review_reason": "明确否定记录错误，且没有反馈效果。"
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13",
+    "coverage_review_provenance": "AI_TEXT_REVIEW_OF_USER_ATTESTED_SCRIPT_NOT_AUDIO_OR_SECOND_HUMAN_REVIEW_2026-11-13"
+  },
+  {
+    "sample_id": "S16",
+    "topic_id": "T04",
+    "speaker_id": "",
+    "split": "evaluation",
+    "wav_path": "local/S16.wav",
+    "sha256": "f4c1f15ba02edcc39af5594b61c9576fbecd1f8be306670556341fbc5bae4e42",
+    "effective_input": null,
+    "reference_text": "我先查积水点和被困人员，划出危险区并帮助低洼住户撤离，联系物业与应急队排水救援。持续向居民通报进展，雨后复盘排水设施问题。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "核实积水位置与人员风险",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "设置警戒并疏散危险区域人员",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "联动物业和应急力量排水救援",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "持续通报并复盘整改",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13"
+  },
+  {
+    "sample_id": "S17",
+    "topic_id": "T04",
+    "speaker_id": "",
+    "split": "evaluation",
+    "wav_path": "local/S17.wav",
+    "sha256": "41d13a188b46f37ce7896d89fac24485c888f973974a6fb5ada4cd46253edf0d",
+    "effective_input": null,
+    "reference_text": "先核实哪里积水、有没有人员受困，再封住危险路段并引导居民转移，叫物业和应急人员来排水救援。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "核实积水位置与人员风险",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "设置警戒并疏散危险区域人员",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "联动物业和应急力量排水救援",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "持续通报并复盘整改",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13"
+  },
+  {
+    "sample_id": "S18",
+    "topic_id": "T04",
+    "speaker_id": "",
+    "split": "evaluation",
+    "wav_path": "local/S18.wav",
+    "sha256": "5bacf4ec2892d7aea468a134f87ce0f63d4f16861ef795fa25632634c4df1095",
+    "effective_input": null,
+    "reference_text": "先确认地下车库和低洼处的水位及人员情况，协调抽水设备与救援人员。事后向住户说明处理情况，并检查排水沟需要怎样修。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "核实积水位置与人员风险",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "设置警戒并疏散危险区域人员",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "联动物业和应急力量排水救援",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "持续通报并复盘整改",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13"
+  },
+  {
+    "sample_id": "S19",
+    "topic_id": "T04",
+    "speaker_id": "",
+    "split": "evaluation",
+    "wav_path": "local/S19.wav",
+    "sha256": "2102ef88fdbb36f49a0c0221ba6972c685eb648150f5a941aeea91fd2995ed0d",
+    "effective_input": null,
+    "reference_text": "下雨天最好把个人出行计划改成室内活动，我会准备雨伞和备用鞋。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "核实积水位置与人员风险",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "设置警戒并疏散危险区域人员",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "联动物业和应急力量排水救援",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "持续通报并复盘整改",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13"
+  },
+  {
+    "sample_id": "S20",
+    "topic_id": "T04",
+    "speaker_id": "",
+    "split": "evaluation",
+    "wav_path": "local/S20.wav",
+    "sha256": "602c7dec2fd4cf14c3cfdfdaacb18cea02d922b1b849a833f9b760b68ce366fe",
+    "effective_input": null,
+    "reference_text": "我会核实积水和人员情况，也联系物业排水。不过我不准备封闭危险区域或疏散居民；处理结束后也不通报和复盘。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "核实积水位置与人员风险",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "设置警戒并疏散危险区域人员",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "联动物业和应急力量排水救援",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "持续通报并复盘整改",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13"
+  },
+  {
+    "sample_id": "S21",
+    "topic_id": "T05",
+    "speaker_id": "",
+    "split": "evaluation",
+    "wav_path": "local/S21.wav",
+    "sha256": "5e7bed94ef567e27ada5cb75a69b76225f36b89e12454aae2faa2e7b717d34f0",
+    "effective_input": null,
+    "reference_text": "我先问老人要办理什么业务，保留线下窗口并安排志愿者一对一帮忙。操作时教他们识别正规入口，不代收密码和验证码。办完后听取意见，留下继续求助的电话。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "了解老人具体办理需求",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "提供线下窗口或一对一协助",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "讲解操作并保护个人信息",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "收集反馈、保留持续帮助渠道",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13"
+  },
+  {
+    "sample_id": "S22",
+    "topic_id": "T05",
+    "speaker_id": "",
+    "split": "evaluation",
+    "wav_path": "local/S22.wav",
+    "sha256": "fb8a04aeba6fb9c622e02f36af40ce9db69868db1a03c3167a19bc449161c830",
+    "effective_input": null,
+    "reference_text": "先了解老人需要办的事项，提供线下窗口和一对一指导，手把手讲操作，但不让志愿者代管密码或验证码。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "了解老人具体办理需求",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "提供线下窗口或一对一协助",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "讲解操作并保护个人信息",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "收集反馈、保留持续帮助渠道",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13"
+  },
+  {
+    "sample_id": "S23",
+    "topic_id": "T05",
+    "speaker_id": "",
+    "split": "evaluation",
+    "wav_path": "local/S23.wav",
+    "sha256": "ca841c62c800b35d9a017c5c08ff51be23c4481cb3fb4ec23b38bc316a791abe",
+    "effective_input": null,
+    "reference_text": "我先弄清楚老人要查询还是要提交材料，演示怎样进入官方页面，并提醒保护个人信息。之后留下联系方式，碰到问题可以继续问。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "了解老人具体办理需求",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "提供线下窗口或一对一协助",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "讲解操作并保护个人信息",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "收集反馈、保留持续帮助渠道",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13"
+  },
+  {
+    "sample_id": "S24",
+    "topic_id": "T05",
+    "speaker_id": "",
+    "split": "evaluation",
+    "wav_path": "local/S24.wav",
+    "sha256": "2d8103107cf10651fc6739d64c98eb804182006bbfb84494034f338e997f07ca",
+    "effective_input": null,
+    "reference_text": "年轻人使用手机很熟练，我会给大家介绍新款手机拍照和看视频的功能。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "了解老人具体办理需求",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "提供线下窗口或一对一协助",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "讲解操作并保护个人信息",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "收集反馈、保留持续帮助渠道",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13"
+  },
+  {
+    "sample_id": "S25",
+    "topic_id": "T05",
+    "speaker_id": "",
+    "split": "evaluation",
+    "wav_path": "local/S25.wav",
+    "sha256": "6bee52011dad3f35ea4010b78b2b963a8ca4ccbf1b516fff70b66de0b7a49844",
+    "effective_input": null,
+    "reference_text": "我先询问办理需求，安排线下窗口。不过为了省事，操作时让志愿者统一收集密码和验证码；办完就不再收集反馈或提供帮助渠道。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "了解老人具体办理需求",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "提供线下窗口或一对一协助",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "讲解操作并保护个人信息",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "收集反馈、保留持续帮助渠道",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13"
+  },
+  {
+    "sample_id": "S26",
+    "topic_id": "T06",
+    "speaker_id": "",
+    "split": "evaluation",
+    "wav_path": "local/S26.wav",
+    "sha256": "e8703e5a8f910d8eab4454a049ea3f51cbddde891193e4093d3397f2b87314da",
+    "effective_input": null,
+    "reference_text": "我先观察放学高峰堵在哪里、原因是什么，再协调学校、交警和家长，设置临时接送区与安全过街路线。试行一周后继续统计拥堵和安全情况，必要时调整。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "观察高峰时段与拥堵原因",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "协调学校、交警和家长",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "设置分流与安全通行措施",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "持续监测并调整方案",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13"
+  },
+  {
+    "sample_id": "S27",
+    "topic_id": "T06",
+    "speaker_id": "",
+    "split": "evaluation",
+    "wav_path": "local/S27.wav",
+    "sha256": "7fac5ba90ead51b9355e79ec46e9fbfecc51f6a74fc637e50d3e2147dedee0c0",
+    "effective_input": null,
+    "reference_text": "先在放学时间观察拥堵原因，和学校、交警、家长沟通，划分接送区并安排安全过街引导。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "观察高峰时段与拥堵原因",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "协调学校、交警和家长",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "设置分流与安全通行措施",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "持续监测并调整方案",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13"
+  },
+  {
+    "sample_id": "S28",
+    "topic_id": "T06",
+    "speaker_id": "",
+    "split": "evaluation",
+    "wav_path": "local/S28.wav",
+    "sha256": "e4cf9da6d3883c95def560313e14b30cdedf5816acb578b9de00c41099cdb794",
+    "effective_input": null,
+    "reference_text": "我先记录车辆排队的时间与位置，安排分流路线和行人安全通道。执行后再看排队长度和险情，发现问题就改。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "观察高峰时段与拥堵原因",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "协调学校、交警和家长",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "设置分流与安全通行措施",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "持续监测并调整方案",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13"
+  },
+  {
+    "sample_id": "S29",
+    "topic_id": "T06",
+    "speaker_id": "",
+    "split": "evaluation",
+    "wav_path": "local/S29.wav",
+    "sha256": "d5e0e305bdfa2e8119cd7a447367205f0df223b5c1a535f29f4ca802798697db",
+    "effective_input": null,
+    "reference_text": "我想让学校增加体育活动，放学后大家可以一起锻炼身体。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "观察高峰时段与拥堵原因",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "协调学校、交警和家长",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "设置分流与安全通行措施",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "持续监测并调整方案",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13"
+  },
+  {
+    "sample_id": "S30",
+    "topic_id": "T06",
+    "speaker_id": "",
+    "split": "evaluation",
+    "wav_path": "local/S30.wav",
+    "sha256": "35e2c43a166885cfbebffddc72b1f71e97bc45d9d7ee885f9be79146c561e469",
+    "effective_input": null,
+    "reference_text": "我先找出拥堵原因，也和学校、交警、家长讨论，但不准备设置分流或安全通行措施，实施后也无需再监测。",
+    "annotator": "",
+    "reviewer": "",
+    "consent": null,
+    "keypoints": [
+      {
+        "keypoint_id": "k1",
+        "text": "观察高峰时段与拥堵原因",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k2",
+        "text": "协调学校、交警和家长",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k3",
+        "text": "设置分流与安全通行措施",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      },
+      {
+        "keypoint_id": "k4",
+        "text": "持续监测并调整方案",
+        "expected_covered": null,
+        "accepted_evidence_sentence_ids": []
+      }
+    ],
+    "reference_text_provenance": "USER_ATTESTED_RECORDING_MATCHES_DESIGN_SCRIPT_2026-11-13"
+  }
+]

@@ -1,6 +1,6 @@
 {
   "model_version": "modelset-e8f8c211226b-066409f3d9db-9ba59cbaae79",
-  "config_version": "rules-v1",
+  "config_version": "rules-v2",
   "source_archives": [
     {
       "path": "weights/vosk-model-cn-0.22.zip",
@@ -145,7 +145,7 @@
     "max_length": 128,
     "pooling": "mean",
     "normalize": "L2",
-    "match_threshold": 0.8,
+    "match_threshold": 0.54,
     "vad_threshold": 0.5,
     "tokenizer": "XLM-R SentencePiece offset=1",
     "long_text": "126-token chunks weighted by content-token count"

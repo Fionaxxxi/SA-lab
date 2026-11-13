@@ -3,6 +3,30 @@ import numpy as np
 import onnxruntime as ort
 import sentencepiece as spm
 from server.gateway.protocol import ProtocolError
+from server.modules.match import NEGATED_ACTION
+
+
+CLAUSE_START = re.compile(r"然后|接下来|之后|结束后|活动结束|同时|现场|不过|但是|但我|但不|也不|不会|不做|再和|再去|再请|最后|每天|每周")
+
+
+def answer_clauses(text):
+    """Create spoken clauses and bounded windows without cutting negation cues away."""
+    pieces = []
+    for sentence in re.findall(r"[^。！？!?；;\n]+[。！？!?；;]?", text):
+        sentence = sentence.strip()
+        if not sentence:
+            continue
+        starts = [0] + [match.start() for match in CLAUSE_START.finditer(sentence) if match.start()]
+        parts = [sentence[left:right].strip() for left, right in zip(starts, starts[1:] + [len(sentence)])]
+        pieces.extend(part for part in parts if len(part) >= 5)
+    clauses = pieces or ([text.strip()] if text.strip() else [])
+    passages = []
+    for clause in clauses:
+        passages.append(clause)
+        if len(clause) > 28 and not NEGATED_ACTION.search(clause):
+            passages.extend(clause[start:start + 28] for start in range(0, len(clause), 14)
+                           if len(clause[start:start + 28]) >= 8)
+    return list(dict.fromkeys(passages))
 
 
 class Semantic:
@@ -31,7 +55,7 @@ class Semantic:
         return (vector / norm).tolist()
 
     def __call__(self, payload):
-        sentences = [x.strip() for x in re.findall(r"[^。！？!?；;\n]+[。！？!?；;]?", payload["transcript"]["full_text"]) if x.strip()]
+        sentences = answer_clauses(payload["transcript"]["full_text"])
         if not sentences:
             raise ProtocolError("NO_TRANSCRIPT", "No sentences")
         return {"embeddings": {

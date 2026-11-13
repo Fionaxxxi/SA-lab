@@ -14,8 +14,8 @@ android {
         applicationId = "com.example.interviewfeedback"
         minSdk = 26
         targetSdk = 31
-        versionCode = 4
-        versionName = "0.3.0"
+        versionCode = 5
+        versionName = "0.3.1"
         buildConfigField("String", "SOURCE_REVISION", "\"" + providers.gradleProperty("sourceRevision").getOrElse("UNVERSIONED") + "\"")
         ndk { abiFilters += "arm64-v8a" }
     }

@@ -45,3 +45,4 @@ __pycache__/
 
 # Local quality review reports
 /experiments/results/quality-local/
+/outputs/desktop-runtime/

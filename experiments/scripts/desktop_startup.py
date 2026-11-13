@@ -66,12 +66,17 @@ def worker(args):
         expected = golden['expected']
         intervals = [{k:v for k,v in row.items() if k != 'pcm_b64'} for row in outputs['M1']['segments']]
         assert intervals == expected['intervals']
-        assert outputs['M2']['transcript'] == expected['transcript']
+        transcript_equal = outputs['M2']['transcript'] == expected['transcript']
+        if not args.observational:
+            assert transcript_equal
         max_score_diff = 0
+        match_fields_equal = True
         for actual, wanted in zip(outputs['M4']['matches'], expected['matches'], strict=True):
             max_score_diff = max(max_score_diff, abs(actual['score'] - wanted['score']))
-            assert max_score_diff <= golden['tolerance']['score_abs']
-            assert {k:v for k,v in actual.items() if k != 'score'} == {k:v for k,v in wanted.items() if k != 'score'}
+            match_fields_equal &= {k:v for k,v in actual.items() if k != 'score'} == {k:v for k,v in wanted.items() if k != 'score'}
+            if not args.observational:
+                assert max_score_diff <= golden['tolerance']['score_abs']
+                assert match_fields_equal
         encoder = handlers['M3']
         vectors = [encoder.vector(text) for text in golden['input']['texts']]
         tokens = [encoder.tokens(text) for text in golden['input']['texts']]
@@ -82,8 +87,12 @@ def worker(args):
         assert prefix_error <= golden['tolerance']['vector_abs']
         assert cosine_error <= golden['tolerance']['vector_abs']
         assert max(abs(norms - 1)) <= golden['tolerance']['norm_abs']
-        return elapsed_ms, durations, {'passed': True, 'tokens_equal': True,
-            'vector_prefix_max_abs': prefix_error, 'cosine_max_abs': cosine_error, 'score_max_abs': max_score_diff}
+        match_equal = match_fields_equal and max_score_diff <= golden['tolerance']['score_abs']
+        passed = transcript_equal and match_equal and max_score_diff <= golden['tolerance']['score_abs']
+        return elapsed_ms, durations, {'passed': passed, 'tokens_equal': True,
+            'transcript_equal': transcript_equal, 'observed_transcript': outputs['M2']['transcript'],
+            'matches_equal': match_equal, 'vector_prefix_max_abs': prefix_error,
+            'cosine_max_abs': cosine_error, 'score_max_abs': max_score_diff}
     if args.kind == 'MODEL_WARM':
         inference()  # One unrecorded prewarm; never count it as a measured trial.
     rows = []
@@ -113,13 +122,16 @@ def main(args):
         child = args.output / f'worker-{len(children)+1}.json'
         command = [sys.executable, '-m', 'experiments.scripts.desktop_startup', '--worker', '--models', str(args.models),
             '--wav', str(args.wav), '--golden', str(args.golden), '--output', str(child), '--kind', kind, '--trials', str(count)]
+        if args.observational:
+            command.append('--observational')
         started = time.perf_counter()
         result = subprocess.run(command, check=True)
         observed = json.loads(child.read_text('utf-8'))
         children.append({'file': child.name, 'process_wall_ms': (time.perf_counter() - started) * 1000,
                          'before_load': observed['before_load'], 'after_load': observed['after_load']})
         rows += observed['rows']
-    metadata = {'condition': 'REAL_MODELS_SYNTHETIC_TTS_DESKTOP_ONLY',
+    golden = json.loads(args.golden.read_text('utf-8'))
+    metadata = {'condition': golden.get('condition', 'UNSPECIFIED_DESKTOP_GOLDEN'),
         'created_at': datetime.now(timezone.utc).isoformat(), 'device_id': platform.node(),
         'platform': platform.platform(), 'cpu': platform.processor(), 'python': platform.python_version(),
         'model_version': json.loads((args.models/'manifest.json').read_text('utf-8'))['model_version'],
@@ -131,7 +143,8 @@ def main(args):
         'memory_definition': 'Windows process working-set/commit counters; peak is process lifetime high-water, not incremental per trial.',
         'reference': 'https://learn.microsoft.com/en-us/windows/win32/api/psapi/ns-psapi-process_memory_counters',
         'latency_definition': 'VAD+ASR+semantic+match only; excludes loading, WAV decode, token/vector regression checks and UI.',
-        'formal_phone_or_human_evaluation': False, 'children': children, 'rows': rows}
+        'formal_phone_or_human_evaluation': False, 'observational': args.observational,
+        'children': children, 'rows': rows}
     (args.output/'startup.json').write_text(json.dumps(metadata, ensure_ascii=False, indent=2), 'utf-8')
     export_csv(metadata, args.output/'startup.csv')
     print(f'Completed {len(rows)} measured trials in {len(children)} separate processes.', flush=True)
@@ -146,5 +159,7 @@ if __name__ == '__main__':
     parser.add_argument('--worker', action='store_true')
     parser.add_argument('--kind', choices=['PROCESS_COLD', 'MODEL_WARM'], default='PROCESS_COLD')
     parser.add_argument('--trials', type=int, default=1)
+    parser.add_argument('--observational', action='store_true',
+                        help='Measure a real recording while retaining any ASR/match variation instead of aborting.')
     args = parser.parse_args()
     worker(args) if args.worker else main(args)

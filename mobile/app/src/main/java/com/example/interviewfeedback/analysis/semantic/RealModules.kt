@@ -21,6 +21,7 @@ class RealModules(private val directory: File) : LocalModules, AutoCloseable {
     private val sessions = mutableListOf<OrtSession>()
     private val dimension = config.getInt("dimension")
     private val maxLength = config.getInt("max_length")
+    private val negatedAction = Regex("不打算|不准备|无需|不用|不做|不考虑|不安排|不需要|不会(?:做|再|去|提供|回访|调整|记录|设置|组织|提醒)")
     private fun artifact(key: String) = File(directory, artifacts.getJSONObject(key).getString("path"))
     private val vadResource = lazy { session("vad") }
     private val semanticResource = lazy { session("semantic") }
@@ -162,8 +163,20 @@ class RealModules(private val directory: File) : LocalModules, AutoCloseable {
     }
 
     override fun encode(input: EncodeInput, id: CallId): Embeddings {
-        val sentences = Regex("[^。！？!?；;\n]+[。！？!?；;]?").findAll(input.transcript.fullText)
-            .map { it.value.trim() }.filter { it.isNotEmpty() }.toList()
+        val starts = Regex("然后|接下来|之后|结束后|活动结束|同时|现场|不过|但是|但我|但不|也不|不会|不做|再和|再去|再请|最后|每天|每周")
+        val clauses = Regex("[^。！？!?；;\n]+[。！？!?；;]?").findAll(input.transcript.fullText)
+            .flatMap { match ->
+                val text = match.value.trim()
+                val offsets = listOf(0) + starts.findAll(text).map { it.range.first }.filter { it > 0 }.toList()
+                (offsets + text.length).zipWithNext().map { (left, right) -> text.substring(left, right).trim() }
+                    .filter { it.length >= 5 }
+            }.toList().ifEmpty { listOf(input.transcript.fullText.trim()).filter { it.isNotEmpty() } }
+        val sentences = clauses.flatMap { clause ->
+            listOf(clause) + if (clause.length > 28 && !negatedAction.containsMatchIn(clause))
+                clause.indices.step(14).map { start -> clause.substring(start, minOf(start + 28, clause.length)) }
+                    .filter { it.length >= 8 }
+            else emptyList()
+        }.distinct()
         if (sentences.isEmpty()) throw ModuleFailure(ErrorCode.NO_TRANSCRIPT)
         return Embeddings(dimension, sentences.mapIndexed { index, text ->
             SentenceVector("s${index + 1}", text, vector(text))
@@ -176,12 +189,15 @@ class RealModules(private val directory: File) : LocalModules, AutoCloseable {
         if (all.any { values -> values.size != dimension || values.any { !it.isFinite() } ||
                 kotlin.math.abs(sqrt(values.sumOf { it * it }) - 1) > 1e-5 })
             throw ModuleFailure(ErrorCode.INVALID_PAYLOAD)
+        val eligible = embeddings.sentences.indices.filter { index ->
+            !negatedAction.containsMatchIn(embeddings.sentences[index].text)
+        }
         return Matches(embeddings.keypoints.map { key ->
             val scores = embeddings.sentences.map { sentence -> key.vector.zip(sentence.vector).sumOf { it.first * it.second } }
-            val best = scores.indices.maxBy { scores[it] }
+            val best = (eligible.ifEmpty { scores.indices.toList() }).maxBy { scores[it] }
             val sentence = embeddings.sentences[best]
             val score = scores[best].coerceIn(-1.0, 1.0)
-            Match(key.id, score, score >= config.getDouble("match_threshold"), sentence.id, sentence.text)
+            Match(key.id, score, eligible.isNotEmpty() && score >= config.getDouble("match_threshold"), sentence.id, sentence.text)
         })
     }
 

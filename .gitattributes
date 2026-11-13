@@ -7,3 +7,6 @@
 *.md text eol=lf
 gradlew text eol=lf
 *.bat text eol=crlf
+experiments/samples/local/** filter=lfs diff=lfs merge=lfs -text
+outputs/*.apk filter=lfs diff=lfs merge=lfs -text
+outputs/*.wav filter=lfs diff=lfs merge=lfs -text

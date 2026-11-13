@@ -1,0 +1,114 @@
+{
+  "id": "c8806700815b495ca71cb16f4bd8e0aa",
+  "condition": "DESKTOP_LOCAL_INPUT_NOT_HUMAN_REVIEWED",
+  "formal_evaluation": false,
+  "source_wav": "sa-test.wav",
+  "audio_sha256": "05fcf72d061ba41d78fe42e79bdcdb95c7c9e078935798455078fef9ca5490a4",
+  "audio_duration_s": 40.704,
+  "model_version": "modelset-e8f8c211226b-066409f3d9db-9ba59cbaae79",
+  "config_version": "rules-v1",
+  "reference_keypoints": [
+    {
+      "keypoint_id": "k1",
+      "text": "调查居民需求和常见诈骗类型"
+    },
+    {
+      "keypoint_id": "k2",
+      "text": "联合社区开展案例宣传"
+    },
+    {
+      "keypoint_id": "k3",
+      "text": "提醒居民保护验证码并谨慎转账"
+    },
+    {
+      "keypoint_id": "k4",
+      "text": "活动后收集反馈并回访"
+    }
+  ],
+  "model_load_ms": 43617.250999988755,
+  "inference_ms": 16387.426200002665,
+  "total_ms": 60027.79580000788,
+  "module_ms": {
+    "M1": 706.0157999949297,
+    "M2": 14435.996499989415,
+    "M3": 1236.403800008702,
+    "M4": 1.032400003168732
+  },
+  "transcript": {
+    "full_text": "我会先了解社区居民常遇到的诈骗类型以及老年居民使用手机时有哪些疑问\n然后联合社区工作人员\n通过讲解\n呃宣传单\n结合真实案例讲清楚冒充客服虚假投资等常见骗局\n活动中安排现场提问和操作也是提醒大家不要随意转账或泄露验证码\n活动结束后我会收集居民的反馈回访重点人群在调整下一次宣传内容",
+    "segments": [
+      {
+        "segment_id": "seg1",
+        "start_sample": 21024,
+        "end_sample": 153568,
+        "text": "我会先了解社区居民常遇到的诈骗类型以及老年居民使用手机时有哪些疑问"
+      },
+      {
+        "segment_id": "seg2",
+        "start_sample": 161312,
+        "end_sample": 204256,
+        "text": "然后联合社区工作人员"
+      },
+      {
+        "segment_id": "seg3",
+        "start_sample": 208416,
+        "end_sample": 227808,
+        "text": "通过讲解"
+      },
+      {
+        "segment_id": "seg4",
+        "start_sample": 232992,
+        "end_sample": 253920,
+        "text": "呃宣传单"
+      },
+      {
+        "segment_id": "seg5",
+        "start_sample": 259616,
+        "end_sample": 364512,
+        "text": "结合真实案例讲清楚冒充客服虚假投资等常见骗局"
+      },
+      {
+        "segment_id": "seg6",
+        "start_sample": 372768,
+        "end_sample": 506336,
+        "text": "活动中安排现场提问和操作也是提醒大家不要随意转账或泄露验证码"
+      },
+      {
+        "segment_id": "seg7",
+        "start_sample": 515104,
+        "end_sample": 644064,
+        "text": "活动结束后我会收集居民的反馈回访重点人群在调整下一次宣传内容"
+      }
+    ]
+  },
+  "matches": [
+    {
+      "keypoint_id": "k1",
+      "score": 0.6599896529356561,
+      "covered": false,
+      "evidence_sentence_id": "s1",
+      "evidence_text": "我会先了解社区居民常遇到的诈骗类型以及老年居民使用手机时有哪些疑问"
+    },
+    {
+      "keypoint_id": "k2",
+      "score": 0.5675063074778536,
+      "covered": false,
+      "evidence_sentence_id": "s2",
+      "evidence_text": "然后联合社区工作人员"
+    },
+    {
+      "keypoint_id": "k3",
+      "score": 0.6262144069328827,
+      "covered": false,
+      "evidence_sentence_id": "s6",
+      "evidence_text": "活动中安排现场提问和操作也是提醒大家不要随意转账或泄露验证码"
+    },
+    {
+      "keypoint_id": "k4",
+      "score": 0.78665111189213,
+      "covered": false,
+      "evidence_sentence_id": "s7",
+      "evidence_text": "活动结束后我会收集居民的反馈回访重点人群在调整下一次宣传内容"
+    }
+  ]
+}

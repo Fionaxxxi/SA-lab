@@ -1,5 +1,9 @@
 # Android 客户端
 
+## 本地 rules-v2 候选（2026-11-13）
+
+要点漏判修复已同步到电脑和手机源码：无标点长回答拆为短句/肯定短窗口，否定行动句不作为“已覆盖”证据；模型清单配置为 `rules-v2`、阈值 0.54。`feature/lhf` 包含 `outputs/InterviewFeedback-0.3.1-rules-v2-debug.apk`，但按用户要求不上传未修改的权重或本机 `outputs/android-models-rules-v2.zip`。手机必须另取得与 `models/manifest.json` 匹配的权重并按 `models/README.md` 打包、导入；旧 `rules-v1` 模型包不能与此 APK 混用。这是本地候选，尚未完成两手机与人工标签验收，详细结果见 `docs/S0-S3剩余验收实施清单.md` 第 10 节。旧版 0.3.0 与新调试 APK 签名不同，不能覆盖安装，卸载前先导出需要保留的数据。
+
 ## 当前状态（2026-11-12）
 
 Gradle 工程已提交，S1 的本地链路代码已实现：录音与 WAV 导入导出、Silero VAD、Vosk 中文识别、SentencePiece 分词 + ONNX 语义编码、要点匹配、反馈页、任务协调与取消。
