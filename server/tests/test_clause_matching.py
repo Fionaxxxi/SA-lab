@@ -26,14 +26,14 @@ class ClauseMatchingTests(unittest.TestCase):
                 {"sentence_id": "s1", "text": "我不打算提醒居民保护验证码", "vector": [1.0, 0.0]},
                 {"sentence_id": "s2", "text": "先了解居民情况", "vector": [0.0, 1.0]},
             ],
-            "keypoints": [{"keypoint_id": "k1", "vector": [1.0, 0.0]}]}}
+            "keypoints": [{"keypoint_id": "k1", "text": "提醒居民保护验证码", "vector": [1.0, 0.0]}]}}
         actual = Matcher(2, 0.54)(payload)["matches"][0]
         self.assertFalse(actual["covered"])
 
     def test_protective_warning_is_not_rejected(self):
         payload = {"embeddings": {"dimension": 2,
             "answer_sentences": [{"sentence_id": "s1", "text": "提醒大家不要泄露验证码", "vector": [1.0, 0.0]}],
-            "keypoints": [{"keypoint_id": "k1", "vector": [1.0, 0.0]}]}}
+            "keypoints": [{"keypoint_id": "k1", "text": "提醒大家不要泄露验证码", "vector": [1.0, 0.0]}]}}
         actual = Matcher(2, 0.54)(payload)["matches"][0]
         self.assertTrue(actual["covered"])
         payload["embeddings"]["answer_sentences"][0]["text"] = "提醒大家不会泄露验证码"

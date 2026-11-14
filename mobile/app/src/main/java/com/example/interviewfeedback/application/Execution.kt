@@ -45,7 +45,7 @@ data class Transcript(val fullText: String, val segments: List<TranscriptSegment
 data class Keypoint(val id: String, val text: String)
 data class EncodeInput(val transcript: Transcript, val keypoints: List<Keypoint>) : ModuleInput
 data class SentenceVector(val id: String, val text: String, val vector: List<Double>)
-data class KeypointVector(val id: String, val vector: List<Double>)
+data class KeypointVector(val id: String, val text: String, val vector: List<Double>)
 data class Embeddings(
     val dimension: Int,
     val sentences: List<SentenceVector>,

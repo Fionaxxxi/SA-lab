@@ -12,7 +12,7 @@ class RealContracts(unittest.TestCase):
         model = {"dimension": 2, "answer_sentences": [
             {"sentence_id": "s1", "text": "先调查需求", "vector": [1, 0]},
             {"sentence_id": "s2", "text": "调查需求", "vector": [1, 0]}],
-            "keypoints": [{"keypoint_id": "k1", "vector": [1, 0]}]}
+            "keypoints": [{"keypoint_id": "k1", "text": "调查需求", "vector": [1, 0]}]}
         result = Matcher(2, 0.8)({"embeddings": model})["matches"][0]
         self.assertEqual(result["evidence_sentence_id"], "s1")
         self.assertTrue(result["covered"])

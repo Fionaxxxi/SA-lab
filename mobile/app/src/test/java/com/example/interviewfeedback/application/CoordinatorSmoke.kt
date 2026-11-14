@@ -23,7 +23,7 @@ private class Fixtures : LocalModules {
 
     override fun encode(input: EncodeInput, id: CallId) = Embeddings(
         2, listOf(SentenceVector("s1", TEXT, listOf(1.0, 0.0))),
-        input.keypoints.map { KeypointVector(it.id, listOf(1.0, 0.0)) })
+        input.keypoints.map { KeypointVector(it.id, it.text, listOf(1.0, 0.0)) })
 
     override fun match(embeddings: Embeddings, id: CallId) =
         Matches(embeddings.keypoints.map { Match(it.id, 1.0, true, "s1", TEXT) })

@@ -37,6 +37,12 @@ class RealModules(private val directory: File) : LocalModules, AutoCloseable {
     }
 
     companion object {
+        /** 取依据时的分数容差带：只在该范围内挑句子，避免把明显更差的句子当依据。 */
+        const val EVIDENCE_BAND = 0.85
+
+        /** 依据句与要点原文的最小连续重合字数，低于此值视为没有更好的依据，退回最高分句。 */
+        const val EVIDENCE_MIN_OVERLAP = 2
+
         fun verifyArtifacts(directory: File, manifest: JSONObject) {
         val artifacts = manifest.getJSONObject("artifacts")
         for (key in artifacts.keys()) {
@@ -180,7 +186,24 @@ class RealModules(private val directory: File) : LocalModules, AutoCloseable {
         if (sentences.isEmpty()) throw ModuleFailure(ErrorCode.NO_TRANSCRIPT)
         return Embeddings(dimension, sentences.mapIndexed { index, text ->
             SentenceVector("s${index + 1}", text, vector(text))
-        }, input.keypoints.map { KeypointVector(it.id, vector(it.text)) })
+        }, input.keypoints.map { KeypointVector(it.id, it.text, vector(it.text)) })
+    }
+
+    /** 最长公共子串长度，用来在分数相近的候选里挑真正贴切的依据句。 */
+    private fun overlap(left: String, right: String): Int {
+        if (left.isEmpty() || right.isEmpty()) return 0
+        var previous = IntArray(right.length + 1)
+        var best = 0
+        for (index in 1..left.length) {
+            val current = IntArray(right.length + 1)
+            val char = left[index - 1]
+            for (other in 1..right.length) if (char == right[other - 1]) {
+                current[other] = previous[other - 1] + 1
+                if (current[other] > best) best = current[other]
+            }
+            previous = current
+        }
+        return best
     }
 
     override fun match(embeddings: Embeddings, id: CallId): Matches {
@@ -192,12 +215,22 @@ class RealModules(private val directory: File) : LocalModules, AutoCloseable {
         val eligible = embeddings.sentences.indices.filter { index ->
             !negatedAction.containsMatchIn(embeddings.sentences[index].text)
         }
+        val threshold = config.getDouble("match_threshold")
         return Matches(embeddings.keypoints.map { key ->
             val scores = embeddings.sentences.map { sentence -> key.vector.zip(sentence.vector).sumOf { it.first * it.second } }
-            val best = (eligible.ifEmpty { scores.indices.toList() }).maxBy { scores[it] }
-            val sentence = embeddings.sentences[best]
+            val pool = eligible.ifEmpty { scores.indices.toList() }
+            val best = pool.maxBy { scores[it] }
             val score = scores[best].coerceIn(-1.0, 1.0)
-            Match(key.id, score, eligible.isNotEmpty() && score >= config.getDouble("match_threshold"), sentence.id, sentence.text)
+            // 短句在余弦空间里天然占优：句中概念越少，单个概念在归一化向量里的权重越高，
+            // 于是短句常以微弱优势压过长句。分数与覆盖判定仍用最高分句，只把“依据”换成
+            // 分数相近、且与要点原文重合更长的句子；找不到合格候选就退回最高分句。
+            val band = pool.filter { scores[it] >= scores[best] * EVIDENCE_BAND }
+            val evidence = band.map { it to overlap(embeddings.sentences[it].text, key.text) }
+                .filter { (_, shared) -> shared >= EVIDENCE_MIN_OVERLAP }
+                .maxWithOrNull(compareBy<Pair<Int, Int>> { it.second }.thenBy { scores[it.first] })
+                ?.first ?: best
+            val sentence = embeddings.sentences[evidence]
+            Match(key.id, score, eligible.isNotEmpty() && score >= threshold, sentence.id, sentence.text)
         })
     }
 

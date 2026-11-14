@@ -27,7 +27,7 @@ def encode(payload):
     return {"embeddings": {
         "dimension": 2,
         "answer_sentences": [{"sentence_id": "s1", "text": TEXT, "vector": [1.0, 0.0]}],
-        "keypoints": [{"keypoint_id": k["keypoint_id"], "vector": [1.0, 0.0]}
+        "keypoints": [{"keypoint_id": k["keypoint_id"], "text": k["text"], "vector": [1.0, 0.0]}
                       for k in payload["keypoints"]],
     }}
 

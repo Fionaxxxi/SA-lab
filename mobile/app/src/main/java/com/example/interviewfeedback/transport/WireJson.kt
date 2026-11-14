@@ -39,7 +39,7 @@ internal object WireJson {
                 json("sentence_id" to it.id, "text" to it.text, "vector" to JSONArray(it.vector))
             }),
             "keypoints" to JSONArray(input.keypoints.map {
-                json("keypoint_id" to it.id, "vector" to JSONArray(it.vector))
+                json("keypoint_id" to it.id, "text" to it.text, "vector" to JSONArray(it.vector))
             })))
     }
 
@@ -55,7 +55,7 @@ internal object WireJson {
                     SentenceVector(it.getString("sentence_id"), it.getString("text"), vector(it))
                 },
                 value.getJSONArray("keypoints").read {
-                    KeypointVector(it.getString("keypoint_id"), vector(it))
+                    KeypointVector(it.getString("keypoint_id"), it.getString("text"), vector(it))
                 })
         }
         Module.M4 -> readMatches(data.getJSONArray("matches"))

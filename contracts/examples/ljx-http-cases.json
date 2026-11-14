@@ -1,6 +1,6 @@
 {
   "sample_id": "ljx-m4-demo-v1",
-  "input_sha256": "83e4061f22856beab244e805c804f9d7fd0072abb51b0a7510404016d46c4874",
+  "input_sha256": "37bf8cf1d05d9f0e50d09f50547d918ec1be34ff306956fc470efe517424a9a3",
   "schema_version": 1,
   "model_version": "modelset-demo",
   "config_version": "rules-demo",
@@ -38,6 +38,7 @@
             "keypoints": [
               {
                 "keypoint_id": "k1",
+                "text": "先调查居民需求",
                 "vector": [
                   1,
                   0
@@ -100,6 +101,7 @@
             "keypoints": [
               {
                 "keypoint_id": "k1",
+                "text": "先调查居民需求",
                 "vector": [
                   1,
                   0
@@ -141,6 +143,7 @@
             "keypoints": [
               {
                 "keypoint_id": "k1",
+                "text": "先调查居民需求",
                 "vector": [
                   1,
                   0
@@ -182,6 +185,7 @@
             "keypoints": [
               {
                 "keypoint_id": "k1",
+                "text": "先调查居民需求",
                 "vector": [
                   1,
                   0
@@ -224,6 +228,7 @@
             "keypoints": [
               {
                 "keypoint_id": "k1",
+                "text": "先调查居民需求",
                 "vector": [
                   1,
                   0
@@ -266,6 +271,7 @@
             "keypoints": [
               {
                 "keypoint_id": "k1",
+                "text": "先调查居民需求",
                 "vector": [
                   1,
                   0

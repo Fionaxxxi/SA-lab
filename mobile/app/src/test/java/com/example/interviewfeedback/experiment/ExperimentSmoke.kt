@@ -17,7 +17,7 @@ private fun adapter(side: Executor, fail: Boolean = false, cancel: ((ModuleReque
         val output: ModuleOutput = when (request.id.module) {
             Module.M1 -> (request.payload as Audio).let { Segments(listOf(Segment("seg1",0,it.sampleCount,it.pcm))) }
             Module.M2 -> (request.payload as Segments).let { Transcript("固定测试",it.values.map { s -> TranscriptSegment(s.id,s.start,s.end,"固定测试") }) }
-            Module.M3 -> (request.payload as EncodeInput).let { Embeddings(2,listOf(SentenceVector("s1","固定测试",listOf(1.0,0.0))),it.keypoints.map { p -> KeypointVector(p.id,listOf(1.0,0.0)) }) }
+            Module.M3 -> (request.payload as EncodeInput).let { Embeddings(2,listOf(SentenceVector("s1","固定测试",listOf(1.0,0.0))),it.keypoints.map { p -> KeypointVector(p.id,p.text,listOf(1.0,0.0)) }) }
             Module.M4 -> Matches(listOf(Match("k1",1.0,true,"s1","固定测试")))
             else -> error("Unexpected module")
         }

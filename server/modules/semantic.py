@@ -61,5 +61,6 @@ class Semantic:
         return {"embeddings": {
             "dimension": self.dimension,
             "answer_sentences": [{"sentence_id": f"s{i+1}", "text": text, "vector": self.vector(text)} for i, text in enumerate(sentences)],
-            "keypoints": [{"keypoint_id": x["keypoint_id"], "vector": self.vector(x["text"])} for x in payload["keypoints"]],
+            "keypoints": [{"keypoint_id": x["keypoint_id"], "text": x["text"], "vector": self.vector(x["text"])}
+                          for x in payload["keypoints"]],
         }}
