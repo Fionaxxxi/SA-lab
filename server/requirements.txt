@@ -1,0 +1,31 @@
+# 服务端运行与测试依赖（Python 3.11）
+#
+# 建环境：
+#   D:\Python311\python.exe -m venv .venv
+#   .venv\Scripts\python.exe -m pip install -r server\requirements.txt
+#
+# 跑测试（必须带 PYTHONPATH，且不要加 -t，否则报 Start directory is not importable）：
+#   $env:PYTHONPATH="<仓库根>"；.venv\Scripts\python.exe -m unittest discover -s server\tests
+#
+# 版本取自 2026-11-13 本机实测环境，在该组合下 server/tests 全绿（Ran 34 tests ... OK）。
+
+# --- HTTP 服务（server/app.py、server/gateway/service.py） ---
+fastapi==0.162.5
+uvicorn==0.54.0
+starlette==1.10.0
+pydantic==2.14.3
+
+# --- 接口测试客户端（server/tests/test_gateway.py 等使用 fastapi TestClient 与 httpx） ---
+httpx==0.28.1
+
+# --- 契约与清单校验 ---
+jsonschema==4.26.0
+
+# --- 电脑端 M1–M4 真实模块（server/modules/*） ---
+numpy==2.4.6
+onnxruntime==1.31.1
+tokenizers==0.23.3
+vosk==0.3.45
+
+# --- 质量报告出图（experiments/scripts/quality_report.py 第 39 行） ---
+matplotlib==3.11.2
