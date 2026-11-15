@@ -14,3 +14,4 @@ outputs/*.wav filter=lfs diff=lfs merge=lfs -text
 # 证据文件按原字节入库：保留 CRLF / UTF-8 BOM，否则 SHA-256 与导出原件对不上
 experiments/results/s3_phone_20261116/** -text
 experiments/configs/run-S01-*.json -text
+experiments/samples/manifest.json -text
