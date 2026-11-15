@@ -3,7 +3,7 @@ import numpy as np
 import onnxruntime as ort
 import sentencepiece as spm
 from server.gateway.protocol import ProtocolError
-from server.modules.match import NEGATED_ACTION
+from server.modules.match import NEGATED_ACTION, NEGATED_EVIDENCE
 
 
 CLAUSE_START = re.compile(r"然后|接下来|之后|结束后|活动结束|同时|现场|不过|但是|但我|但不|也不|不会|不做|再和|再去|再请|最后|每天|每周")
@@ -23,7 +23,10 @@ def answer_clauses(text):
     passages = []
     for clause in clauses:
         passages.append(clause)
-        if len(clause) > 28 and not NEGATED_ACTION.search(clause):
+        # 含否定的长句不进滑窗：28 字窗口按 14 步切，会把「当然就不再收集反馈…」切成
+        # 「收集反馈和提供帮助渠道」，否定词被切掉后，该片段会逐字命中要点并误判为已覆盖
+        # （S25 k4，0.8941）。切句与匹配两处必须用同一套否定判据。
+        if len(clause) > 28 and not (NEGATED_ACTION.search(clause) or NEGATED_EVIDENCE.search(clause)):
             passages.extend(clause[start:start + 28] for start in range(0, len(clause), 14)
                            if len(clause[start:start + 28]) >= 8)
     return list(dict.fromkeys(passages))

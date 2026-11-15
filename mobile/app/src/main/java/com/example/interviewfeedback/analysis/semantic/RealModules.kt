@@ -22,6 +22,19 @@ class RealModules(private val directory: File) : LocalModules, AutoCloseable {
     private val dimension = config.getInt("dimension")
     private val maxLength = config.getInt("max_length")
     private val negatedAction = Regex("不打算|不准备|无需|不用|不做|不考虑|不安排|不需要|不会(?:做|再|去|提供|回访|调整|记录|设置|组织|提醒)")
+    // 与 Python 端 server/modules/match.py 的 NEGATED_EVIDENCE 逐字对齐。negatedAction 只收
+    // 「不打算/不准备/不会做…」，漏掉「不再/没有/未」和「不+单字动词」，17 个常见否定句漏 9 个。
+    // 两个用途：① 长句滑窗前判断，避免 28 字窗口把「就不再收集反馈…」切成「收集反馈…」，
+    // 否定词被切离动作后该片段会逐字命中要点（S25 k4 曾得 0.8941 并误判为已覆盖）；
+    // ② covered 判定，最高分句命中即判未覆盖。两者都不参与 Top-1 选择，score 不因此改变。
+    private val negatedVerb = "(?:做|去|提供|回访|调整|记录|设置|组织|提醒|收集|监测|安排|处理|开展|联系" +
+        "|宣传|讲解|示范|通知|通报|复盘|整改|排水|救援|疏散|警戒|调查|排查|协调" +
+        "|统计|公布|反馈|保留|留下|帮助|协助|跟踪|观察|核实|分发|发放)"
+    private val negatedEvidence = Regex(
+        "不打算|不准备|无需|不用|不做|不考虑|不安排|不需要" +
+            "|不会(?:做|再|去|提供|回访|调整|记录|设置|组织|提醒)" +
+            "|不再$negatedVerb|没有$negatedVerb|未$negatedVerb|不$negatedVerb"
+    )
     private fun artifact(key: String) = File(directory, artifacts.getJSONObject(key).getString("path"))
     private val vadResource = lazy { session("vad") }
     private val semanticResource = lazy { session("semantic") }
@@ -178,7 +191,8 @@ class RealModules(private val directory: File) : LocalModules, AutoCloseable {
                     .filter { it.length >= 5 }
             }.toList().ifEmpty { listOf(input.transcript.fullText.trim()).filter { it.isNotEmpty() } }
         val sentences = clauses.flatMap { clause ->
-            listOf(clause) + if (clause.length > 28 && !negatedAction.containsMatchIn(clause))
+            listOf(clause) + if (clause.length > 28 && !negatedAction.containsMatchIn(clause)
+                && !negatedEvidence.containsMatchIn(clause))
                 clause.indices.step(14).map { start -> clause.substring(start, minOf(start + 28, clause.length)) }
                     .filter { it.length >= 8 }
             else emptyList()
@@ -230,7 +244,9 @@ class RealModules(private val directory: File) : LocalModules, AutoCloseable {
                 .maxWithOrNull(compareBy<Pair<Int, Int>> { it.second }.thenBy { scores[it.first] })
                 ?.first ?: best
             val sentence = embeddings.sentences[evidence]
-            Match(key.id, score, eligible.isNotEmpty() && score >= threshold, sentence.id, sentence.text)
+            // 最高分句若命中补充否定表，说明这句话是在说「不做」，不能算覆盖；score 仍取该句自身余弦。
+            val negatedTop = negatedEvidence.containsMatchIn(embeddings.sentences[best].text)
+            Match(key.id, score, eligible.isNotEmpty() && score >= threshold && !negatedTop, sentence.id, sentence.text)
         })
     }
 
