@@ -182,6 +182,8 @@ M1 与 M2 各多约 65 KB，且 M2 上传的正是 M1 输出的 PCM，两者偏�
 三份 `run-record` 的 `run_config_sha256` 与上表逐个相等；`sample_manifest_sha256` 均为 `e4f9ce67…39ae`，等于仓库内 `experiments/samples/manifest.json` 的哈希（该文件同样声明了 `-text`）。哈希链闭合，clone 之后可直接用 `Get-FileHash` 或 `sha256sum` 逐条复验。
 
 > 这三份配置与 `manifest.json` 原本受 `*.json text eol=lf` 约束，入库时会被去掉行尾字节，导致仓库内的哈希与记录值不符。本目录与这三份配置、以及 `manifest.json` 都声明了 `-text`，Git 不再做行尾规范化，仓库内容与导出原件逐字节相同。
+>
+> 核对时请以 `9d974f5` 及之后的提交为准。`0b7e55e` 到 `e7445ad` 之间的提交里，`manifest.json` 仍是 LF 版，SHA-256 为 `87ddd1055c824bd9ed2f592c8dbcb83dafdebadb4d1daddbaa92f4ff3c226e96`，与这里的 `e4f9ce67…` 不符——那正是本次修复的目标。
 
 `task-*.json` 是 App 导出的原始文件，**保留 UTF-8 BOM 与 CRLF**。读取请用 `utf-8-sig`，否则 Python 的 `json.load` 会抛 `Unexpected UTF-8 BOM`。
 
