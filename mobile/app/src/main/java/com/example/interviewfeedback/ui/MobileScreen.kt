@@ -183,7 +183,11 @@ class MobileScreen(private val host: Activity, private val action: (String) -> U
         val covered = feedback.matches.values.count { it.covered }
         coverage.put(text("要点覆盖  $covered / ${feedback.matches.values.size}", 16f, ink, true))
         val elapsed = record.feedbackElapsedMs ?: record.totalElapsedMs
-        if (elapsed != null) coverage.put(text((if (record.feedbackElapsedMs != null) "完整反馈 " else "结果生成 ") + "%.2f 秒".format(elapsed / 1000.0), 12f, muted), 4)
+        // 「完整反馈」取的是端到端处理耗时（feedbackElapsedMs），不是音频时长。
+        // 不加限定语时容易被读成「这段录音有多长」，验收过程中反复误判过。
+        if (elapsed != null) coverage.put(text(
+            (if (record.feedbackElapsedMs != null) "完整反馈 " else "结果生成 ") +
+                "%.2f 秒 · 端到端处理耗时".format(elapsed / 1000.0), 12f, muted), 4)
         feedback.matches.values.forEach { match ->
             val tint = if (match.covered) teal else Color.rgb(153, 98, 23)
             val block = column().apply {

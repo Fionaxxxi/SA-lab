@@ -270,6 +270,10 @@ class MainActivity : Activity() {
                 if (cancelled.get()) return@execute
                 require((run == null) == (catalog == null)) { "请同时导入运行配置和样本清单，或退出实验模式" }
                 val directory = File(filesDir, "models")
+                // 模型清单缺失时先按规范错误码失败。否则 readBytes 抛 FileNotFoundException，
+                // catch 会把 /data/user/0/<包名>/files/models/manifest.json 这类私有路径
+                // 原样显示到状态条上（B1-05 验收时实测到的问题）。
+                if (!File(directory, "manifest.json").isFile) throw ModuleFailure(ErrorCode.MODEL_UNAVAILABLE)
                 val info = runtimeInfo(File(directory, "manifest.json").readBytes())
                 val bound = if (run != null && catalog != null) {
                     ExperimentFiles.bind(run, catalog, selection, source, captured.wavSha256, info).also { experiments.freeze(run, catalog) }
@@ -297,13 +301,25 @@ class MainActivity : Activity() {
                 if (cancelled.get()) engine.cancel(task.taskId)
                 engine.run(task.taskId, keypoints, 120000, priorAudioPreparationMs = prepMs) {
                     if (run != null) ExperimentFiles.checkAudio(run, captured.audio)
-                    lastAudio.save(captured.audio)
+                    // 「导出最近录音」只应导出真实录音。导入 WAV 分析时若也写到同一个文件，
+                    // 导出的就是导入的那份音频，与按钮名称不符（§2.9.6 实测到该现象）。
+                    if (source == InputSource.RECORDING) lastAudio.save(captured.audio)
                     captured.audio
                 }
                 runOnUiThread { if (!isDestroyed && coordinator === engine) engine.current()?.let { showRecord(engine, it) } }
             } catch (error: Throwable) {
                 if (error is VirtualMachineError || error is ThreadDeath) throw error
-                runOnUiThread { setStatus("执行或配置校验失败：" + (error.message ?: error.javaClass.simpleName)) }
+                // 面向用户的失败文案：只给可执行的动作，不回显异常 message，
+                // 避免把应用私有路径、堆栈类名暴露在界面上。
+                val message = when {
+                    error is ModuleFailure && error.code == ErrorCode.MODEL_UNAVAILABLE ->
+                        "模型包未安装，请先在「+ 模型管理」导入模型包后再分析"
+                    error is java.io.FileNotFoundException ->
+                        "模型文件缺失或已损坏，请重新导入模型包"
+                    error is IllegalArgumentException && error.message != null -> error.message!!
+                    else -> "已中止：" + error.javaClass.simpleName
+                }
+                runOnUiThread { setStatus("执行或配置校验失败：" + message) }
             } finally { busy.set(false) }
         }
     }
