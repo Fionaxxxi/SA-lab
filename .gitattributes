@@ -15,3 +15,6 @@ outputs/*.wav filter=lfs diff=lfs merge=lfs -text
 experiments/results/s3_phone_20261116/** -text
 experiments/configs/run-S01-*.json -text
 experiments/samples/manifest.json -text
+
+# 交付目录内的 APK 同样走 LFS
+deliverables/**/*.apk filter=lfs diff=lfs merge=lfs -text
