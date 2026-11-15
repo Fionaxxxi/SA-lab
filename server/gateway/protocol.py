@@ -67,11 +67,29 @@ def parse_json(data):
     )
 
 
+def leaf_errors(error):
+    """Expand oneOf/anyOf contexts; a branch failure hides its real cause one level down."""
+    branches = error.context or ()
+    if not branches:
+        return [error]
+    return [leaf for branch in branches for leaf in leaf_errors(branch)]
+
+
+def describe(error):
+    """Report the most specific branch failure instead of the useless root `oneOf` error."""
+    leaves = leaf_errors(error)
+    best = max(leaves, key=lambda item: len(item.absolute_path))
+    location = ".".join(map(str, best.absolute_path)) or "$"
+    if not best.absolute_path:
+        return f"Invalid fields at {location}"
+    detail = " ".join(str(best.message).split())[:200]
+    return f"Invalid fields at {location}: {detail}"
+
+
 def check_schema(name, document):
     error = next(VALIDATORS[name].iter_errors(document), None)
     if error is not None:
-        location = ".".join(map(str, error.absolute_path)) or "$"
-        raise ProtocolError("INVALID_PAYLOAD", f"Invalid fields at {location}")
+        raise ProtocolError("INVALID_PAYLOAD", describe(error))
 
 
 def pcm_length(encoded, samples):
