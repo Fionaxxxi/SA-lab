@@ -27,14 +27,8 @@ class RealModules(private val directory: File) : LocalModules, AutoCloseable {
     // 两个用途：① 长句滑窗前判断，避免 28 字窗口把「就不再收集反馈…」切成「收集反馈…」，
     // 否定词被切离动作后该片段会逐字命中要点（S25 k4 曾得 0.8941 并误判为已覆盖）；
     // ② covered 判定，最高分句命中即判未覆盖。两者都不参与 Top-1 选择，score 不因此改变。
-    private val negatedVerb = "(?:做|去|提供|回访|调整|记录|设置|组织|提醒|收集|监测|安排|处理|开展|联系" +
-        "|宣传|讲解|示范|通知|通报|复盘|整改|排水|救援|疏散|警戒|调查|排查|协调" +
-        "|统计|公布|反馈|保留|留下|帮助|协助|跟踪|观察|核实|分发|发放)"
-    private val negatedEvidence = Regex(
-        "不打算|不准备|无需|不用|不做|不考虑|不安排|不需要" +
-            "|不会(?:做|再|去|提供|回访|调整|记录|设置|组织|提醒)" +
-            "|不再$negatedVerb|没有$negatedVerb|未$negatedVerb|不$negatedVerb"
-    )
+    private val negatedVerb get() = NEGATED_VERB
+    private val negatedEvidence get() = NEGATED_EVIDENCE
     private fun artifact(key: String) = File(directory, artifacts.getJSONObject(key).getString("path"))
     private val vadResource = lazy { session("vad") }
     private val semanticResource = lazy { session("semantic") }
@@ -55,6 +49,54 @@ class RealModules(private val directory: File) : LocalModules, AutoCloseable {
 
         /** 依据句与要点原文的最小连续重合字数，低于此值视为没有更好的依据，退回最高分句。 */
         const val EVIDENCE_MIN_OVERLAP = 2
+
+        /** 最长公共子串长度。抽到 companion 是为了让 JVM 单测能直接验证算法本身。 */
+        internal fun overlap(left: String, right: String): Int {
+            if (left.isEmpty() || right.isEmpty()) return 0
+            var previous = IntArray(right.length + 1)
+            var best = 0
+            for (index in 1..left.length) {
+                val current = IntArray(right.length + 1)
+                val char = left[index - 1]
+                for (other in 1..right.length) if (char == right[other - 1]) {
+                    current[other] = previous[other - 1] + 1
+                    if (current[other] > best) best = current[other]
+                }
+                previous = current
+            }
+            return best
+        }
+
+        /**
+         * 依据选句：在分数容差带内挑与要点原文重合最长的句子，平票取分高者；
+         * 没有任何候选达到最小重合字数时退回最高分句。分数与 Top-1 不受影响。
+         */
+        internal fun chooseEvidence(scores: List<Double>, texts: List<String>, pool: List<Int>, keyText: String): Int {
+            val best = pool.maxBy { scores[it] }
+            return pool.filter { scores[it] >= scores[best] * EVIDENCE_BAND }
+                .map { it to overlap(texts[it], keyText) }
+                .filter { (_, shared) -> shared >= EVIDENCE_MIN_OVERLAP }
+                .maxWithOrNull(compareBy<Pair<Int, Int>> { it.second }.thenBy { scores[it.first] })
+                ?.first ?: best
+        }
+
+        /**
+         * 覆盖判定：分数达到阈值，且最高分句没有命中补充否定表。
+         * 否定句的意思是「不做这件事」，即使与要点逐字重合也不能算覆盖。
+         */
+        internal fun isCovered(score: Double, threshold: Double, eligible: Boolean, topText: String): Boolean =
+            eligible && score >= threshold && !NEGATED_EVIDENCE.containsMatchIn(topText)
+
+        /** 与 Python 端 server/modules/match.py 的 NEGATED_EVIDENCE 逐字对齐。 */
+        internal val NEGATED_VERB = "(?:做|去|提供|回访|调整|记录|设置|组织|提醒|收集|监测|安排|处理|开展|联系" +
+            "|宣传|讲解|示范|通知|通报|复盘|整改|排水|救援|疏散|警戒|调查|排查|协调" +
+            "|统计|公布|反馈|保留|留下|帮助|协助|跟踪|观察|核实|分发|发放)"
+
+        internal val NEGATED_EVIDENCE = Regex(
+            "不打算|不准备|无需|不用|不做|不考虑|不安排|不需要" +
+                "|不会(?:做|再|去|提供|回访|调整|记录|设置|组织|提醒)" +
+                "|不再" + NEGATED_VERB + "|没有" + NEGATED_VERB + "|未" + NEGATED_VERB + "|不" + NEGATED_VERB
+        )
 
         fun verifyArtifacts(directory: File, manifest: JSONObject) {
         val artifacts = manifest.getJSONObject("artifacts")
@@ -203,23 +245,6 @@ class RealModules(private val directory: File) : LocalModules, AutoCloseable {
         }, input.keypoints.map { KeypointVector(it.id, it.text, vector(it.text)) })
     }
 
-    /** 最长公共子串长度，用来在分数相近的候选里挑真正贴切的依据句。 */
-    private fun overlap(left: String, right: String): Int {
-        if (left.isEmpty() || right.isEmpty()) return 0
-        var previous = IntArray(right.length + 1)
-        var best = 0
-        for (index in 1..left.length) {
-            val current = IntArray(right.length + 1)
-            val char = left[index - 1]
-            for (other in 1..right.length) if (char == right[other - 1]) {
-                current[other] = previous[other - 1] + 1
-                if (current[other] > best) best = current[other]
-            }
-            previous = current
-        }
-        return best
-    }
-
     override fun match(embeddings: Embeddings, id: CallId): Matches {
         if (embeddings.dimension != dimension || embeddings.sentences.isEmpty()) throw ModuleFailure(ErrorCode.INVALID_PAYLOAD)
         val all = embeddings.sentences.map { it.vector } + embeddings.keypoints.map { it.vector }
@@ -230,23 +255,19 @@ class RealModules(private val directory: File) : LocalModules, AutoCloseable {
             !negatedAction.containsMatchIn(embeddings.sentences[index].text)
         }
         val threshold = config.getDouble("match_threshold")
+        val texts = embeddings.sentences.map { it.text }
         return Matches(embeddings.keypoints.map { key ->
             val scores = embeddings.sentences.map { sentence -> key.vector.zip(sentence.vector).sumOf { it.first * it.second } }
             val pool = eligible.ifEmpty { scores.indices.toList() }
-            val best = pool.maxBy { scores[it] }
-            val score = scores[best].coerceIn(-1.0, 1.0)
             // 短句在余弦空间里天然占优：句中概念越少，单个概念在归一化向量里的权重越高，
             // 于是短句常以微弱优势压过长句。分数与覆盖判定仍用最高分句，只把“依据”换成
             // 分数相近、且与要点原文重合更长的句子；找不到合格候选就退回最高分句。
-            val band = pool.filter { scores[it] >= scores[best] * EVIDENCE_BAND }
-            val evidence = band.map { it to overlap(embeddings.sentences[it].text, key.text) }
-                .filter { (_, shared) -> shared >= EVIDENCE_MIN_OVERLAP }
-                .maxWithOrNull(compareBy<Pair<Int, Int>> { it.second }.thenBy { scores[it.first] })
-                ?.first ?: best
-            val sentence = embeddings.sentences[evidence]
+            val evidence = chooseEvidence(scores, texts, pool, key.text)
+            val best = pool.maxBy { scores[it] }
+            val score = scores[best].coerceIn(-1.0, 1.0)
             // 最高分句若命中补充否定表，说明这句话是在说「不做」，不能算覆盖；score 仍取该句自身余弦。
-            val negatedTop = negatedEvidence.containsMatchIn(embeddings.sentences[best].text)
-            Match(key.id, score, eligible.isNotEmpty() && score >= threshold && !negatedTop, sentence.id, sentence.text)
+            Match(key.id, score, isCovered(score, threshold, eligible.isNotEmpty(), texts[best]),
+                embeddings.sentences[evidence].id, embeddings.sentences[evidence].text)
         })
     }
 
