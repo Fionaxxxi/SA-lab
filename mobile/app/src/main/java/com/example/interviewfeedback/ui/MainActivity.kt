@@ -414,6 +414,14 @@ class MainActivity : Activity() {
         if (!directory.renameTo(installed)) { backup.renameTo(installed); error("Cannot publish models") }
         backup.deleteRecursively()
     }
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode != 1) return
+        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            setStatus("已获得录音权限，请再次点击「录音 / 停止并分析」开始")
+        else
+            setStatus("未获得录音权限：可在系统设置中开启，或改用「导入 WAV 并分析」")
+    }
     override fun onDestroy() {
         screen.close()
         cancelled.set(true)
