@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "run_id": "s3phone-S01-REMOTE",
+  "measurement_version": "measurement-v1",
+  "condition": "FORMAL",
+  "device": {
+    "device_id": "android-d6b42be2-c262-40c0-a382-0b72ccf4f8d2",
+    "model": "ELI-AN00",
+    "android_version": "16",
+    "abi": "arm64-v8a",
+    "power_mode": "NORMAL",
+    "charging": true,
+    "battery_percent": 99.0,
+    "temperature_c": null
+  },
+  "network": {
+    "mode": "WIFI",
+    "actual_bandwidth_mbps": null,
+    "actual_rtt_ms": null,
+    "profile_id": null
+  },
+  "input": {
+    "source": "IMPORT",
+    "duration_s": 0,
+    "keypoint_count": 4,
+    "sample_manifest_sha256": "e4f9ce67f202f6d2b33ad293acc9280cb9fec0cd230aa40488193944cabd39ae",
+    "topic_set": "T01"
+  },
+  "runtime": {
+    "plan_version": "s3phone-3mode-v1",
+    "model_version": "modelset-e8f8c211226b-066409f3d9db-9ba59cbaae79",
+    "config_version": "rules-v2",
+    "apk_commit": "bc1002476144d75932d7936bf0fa106ff1f0d3de",
+    "service_commit": null,
+    "model_manifest_sha256": "86344db864bd2f065b909807ea9796fdc362bc0b5d0673175e7da5ed6a342b9a",
+    "apk_version": "0.3.4",
+    "warmup": "COLD",
+    "cache_policy": "DISABLED",
+    "mode": "REMOTE"
+  }
+}
