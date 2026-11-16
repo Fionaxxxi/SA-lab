@@ -20,8 +20,23 @@
 
 **它不在仓库里**，原因有两条：
 
-1. 超过 GitHub 单文件 100 MB 硬限，Git LFS 也承载不了这个体积；
+1. 超过 GitHub 单文件 100 MiB 硬限，Git LFS 免费额度（1 GB 存储 + 1 GB/月带宽）也承载不了这个体积；
 2. 仓库既有约定本来就不存权重——`models/README.md` 明确写了「不上传权重或包含它们的模型 ZIP」。
+
+### 直接下载（推荐）
+
+模型包作为 Release 资产托管，clone 仓库不会被拉取，需要时单独下载：
+
+<https://github.com/Fionaxxxi/SA-lab/releases/download/v0.3.4/android-models-rulesv2.zip>
+
+同一个 Release 也附带本目录的 APK。下载后核对哈希：
+
+```powershell
+Get-FileHash -LiteralPath .\android-models-rulesv2.zip -Algorithm SHA256
+# 应为 78FF83B24AEF8D05BE0E7C86FEE609FD60A5FEA33DCB77949CF70A76795DBB3F
+```
+
+上传完成后已比对 GitHub 侧 `sha256:` digest，与本地逐位一致；大小 1,792,940,504 B 也一致。
 
 ### 自己重新生成
 
@@ -49,10 +64,11 @@ python models/package_models.py --output models/android-models.zip             #
 
 ## 原始证据在哪
 
-手机侧三模式证据不在本目录，在：
+手机侧证据不在本目录，在：
 
-- `experiments/results/s3_phone_20261116/` — 4 份 task、3 份 run-record、6 张截图、README
+- `experiments/results/s3_phone_20261116/` — 4 份 task、3 份 run-record、6 张截图、README（FORMAL，S01 四要点）
+- `experiments/results/s1_034_phone_20261115/` — 7 张截图、README（`0.3.4` 复跑，MANUAL，手填三条要点）
 - `experiments/configs/run-S01-{LOCAL,REMOTE,MIXED}.json` — 三份运行配置
 - `experiments/samples/manifest.json` — 30 条样本清单
 
-上述文件均声明了 `-text`，按原字节入库。clone 后可用 `sha256sum` 或 `Get-FileHash` 逐条核对 README 中列出的哈希。
+上述文件均声明了 `-text`（截图除外，PNG 按二进制），按原字节入库。clone 后可用 `sha256sum` 或 `Get-FileHash` 逐条核对 README 中列出的哈希。
