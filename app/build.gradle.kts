@@ -27,8 +27,13 @@ android {
     kotlinOptions { jvmTarget = "17" }
 }
 dependencies {
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("org.json:json:20240303")
+    val testLibRoot = providers.gradleProperty("testLibRoot").orNull
+    if (testLibRoot == null) {
+        testImplementation("junit:junit:4.13.2")
+        testImplementation("org.json:json:20240303")
+    } else {
+        testImplementation(files("$testLibRoot/junit-4.13.2.jar", "$testLibRoot/hamcrest-core-1.3.jar", "$testLibRoot/json-20240303.jar"))
+    }
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test:runner:1.5.2")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
