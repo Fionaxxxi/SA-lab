@@ -1,8 +1,8 @@
 package com.example.interviewfeedback.transport
 
 import com.example.interviewfeedback.application.*
-import com.sun.net.httpserver.HttpServer
-import java.net.InetSocketAddress
+import java.net.ServerSocket
+import kotlin.concurrent.thread
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.junit.Assert.*
 import org.junit.Test
@@ -14,20 +14,27 @@ class RemoteTimeoutTest {
     )
 
     private fun delayedServer(delayMs: Long, test: (RemoteExecutor) -> Unit) {
-        val server = HttpServer.create(InetSocketAddress("127.0.0.1", 0), 0)
-        server.createContext("/api/v1/modules/M2/execute") { exchange ->
-            exchange.requestBody.use { it.readBytes() }
+        val server = ServerSocket(0, 1, java.net.InetAddress.getByName("127.0.0.1"))
+        val worker = thread(isDaemon = true) { server.accept().use { socket ->
+            val input = socket.getInputStream().bufferedReader()
+            var length = 0
+            while (true) {
+                val line = input.readLine() ?: break
+                if (line.isEmpty()) break
+                if (line.startsWith("Content-Length:", true)) length = line.substringAfter(':').trim().toInt()
+            }
+            repeat(length) { input.read() }
             Thread.sleep(delayMs)
             val body = """{"schema_version":1,"task_id":"timeout-test","attempt":1,"module_id":"M2","plan_version":"test-plan","model_version":"test-model","config_version":"test-rules","executor":"REMOTE","status":"OK","elapsed_ms":$delayMs,"output":{"transcript":{"full_text":"hello","segments":[{"segment_id":"seg1","start_sample":0,"end_sample":1,"text":"hello"}]}}}""".toByteArray()
             try {
-                exchange.sendResponseHeaders(200, body.size.toLong())
-                exchange.responseBody.use { it.write(body) }
+                socket.getOutputStream().use { output ->
+                    output.write("HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: ${body.size}\r\nConnection: close\r\n\r\n".toByteArray())
+                    output.write(body)
+                }
             } catch (_: java.io.IOException) { /* Client deadline may close the socket. */ }
-            finally { exchange.close() }
-        }
-        server.start()
-        try { test(RemoteExecutor("http://127.0.0.1:${server.address.port}".toHttpUrl(), "test-token")) }
-        finally { server.stop(0) }
+        } }
+        try { test(RemoteExecutor("http://127.0.0.1:${server.localPort}".toHttpUrl(), "test-token")) }
+        finally { server.close(); worker.join(2000) }
     }
 
     @Test fun responseAfterDefaultReadTimeoutSucceedsWithinBudget() = delayedServer(11000) {
